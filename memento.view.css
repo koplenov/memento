@@ -1,0 +1,46 @@
+[mol_book2_catalog_menu] {
+	width: 50%;
+}
+
+[memento_page] {
+	width: 50%;
+}
+
+[memento_sidebar] {
+	padding-left: 1%;
+}
+
+[mol_page_head],
+[memento_sidebar],
+[memento_menu_body],
+[memento_memento_content_link] {
+	border: 1px solid #969696;
+	background-color: #f9f9f9;
+	border-radius: 0px;
+}
+
+[memento_memento_content_link] {
+	margin-left: -1px;
+}
+
+[memento_memento_content_links]{
+	padding: 0px;
+}
+
+[mol_expander_content] {
+	padding-left: 10%;
+}
+
+/* search bar */
+[mol_pop_bubble] {
+	background: #ebebeb;
+}
+
+/* [memento_content_search_query] { */
+[mol_string] {
+	border-radius: 0px;
+}
+
+[mol_link] {
+	color: #363636;
+}
