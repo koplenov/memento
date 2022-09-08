@@ -3,9 +3,13 @@ $memento $mol_view
 		<= Theme $mol_theme_auto
 	sub /
 		<= memento_sidebar $memento_sidebar
+			mementos?val <=> pages?val /
 		<= memento_content $memento_content
+			mementos?val <=> pages?val /
+	pages?val /
 
 $memento_content $mol_book2_catalog
+	mementos null
 	Placeholder null
 	spreads /
 		<= Menu $memento_menu
@@ -42,8 +46,12 @@ $memento_menu $mol_page
 		memento_menu_hided_state <= hided
 
 $memento_page $mol_page
+	data null
 
 $memento_sidebar $mol_list
+	mementos null
+	Collection*0 $mol_expander
+		label <= collection_title* \
 	rows /
 		<= titlebar $mol_view
 			sub /

@@ -3,7 +3,17 @@ namespace $.$$ {
 	const contentMementoSpec: string = 'content.md'
 	const metaMementoSpec: string = 'meta.memento'
 
+	const MementoData = $mol_data_record( {
+		collection: $mol_data_optional( $mol_data_string ),
+		tags: $mol_data_optional( $mol_data_array( $mol_data_string ) ),
+	} )
+
 	export class $memento_content extends $.$memento_content {
+
+		@$mol_mem
+		mementos( val?: any ) {
+			return val
+		}
 
 		@$mol_mem
 		pages() {
@@ -68,7 +78,13 @@ namespace $.$$ {
 			const path = baseMementosDir + '/' + id
 			this.tauri().createDir( path, { dir: this.tauri().BaseDirectory.App, recursive: true } )
 			this.tauri().writeTextFile( path + '/' + contentMementoSpec, 'write simple text here', { dir: this.tauri().BaseDirectory.App } )
-			this.tauri().writeTextFile( path + '/' + metaMementoSpec, '', { dir: this.tauri().BaseDirectory.App } )
+
+			let data = MementoData( {
+				collection: 'GG',
+				tags: [ 'pp', 'gg' ]
+			} )
+
+			this.tauri().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( data ), { dir: this.tauri().BaseDirectory.App } )
 			this.resets( null ) // форсируем ресет
 		}
 
@@ -76,14 +92,22 @@ namespace $.$$ {
 		loadPages() {
 			let pages = []
 			for( const iterator of this.loadInfo() ) {
-				pages.push( this.Page( iterator.name ) )
+				const page = this.Page( iterator.name )
+				page.data = () => this.getMementoData( iterator.name )
+				pages.push( page )
 			}
 			return pages
+		}
+
+		@$mol_action
+		log( message?: any, ...optionalParams: any[] ) {
+			console.log( message, optionalParams )
 		}
 
 		@$mol_mem
 		spreads() {
 			let pages = this.loadPages()
+			this.mementos( pages )
 			// simple search
 			let search = this.search().query()
 			return pages.filter( function( ele ) {
@@ -95,8 +119,21 @@ namespace $.$$ {
 		content( id: any, next?: any ) {
 			const path = baseMementosDir + '/' + id
 			this.tauri().writeTextFile( path + '/' + contentMementoSpec, next, { dir: this.tauri().BaseDirectory.App } )
-			return this.tauri().readTextFile( path + '/' + contentMementoSpec, { dir: this.tauri().BaseDirectory.App } )
-			// or fast cache return this.$.$mol_state_local.value( id, next ) ?? ''
+			//return this.tauri().readTextFile( path + '/' + contentMementoSpec, { dir: this.tauri().BaseDirectory.App } )
+			return this.$.$mol_state_local.value( id, next ) ?? ''
+		}
+
+		@$mol_mem
+		getMementoData( id?: string ) {
+			const path = baseMementosDir + '/' + id
+			return MementoData(
+				JSON.parse(
+					this.tauri().readTextFile(
+						path + '/' + metaMementoSpec,
+						{ dir: this.tauri().BaseDirectory.App }
+					)
+				)
+			)
 		}
 
 		addKeyFromSearch() {
@@ -107,6 +144,17 @@ namespace $.$$ {
 		removeMementoButton( id: any, next?: any ) {
 			this.tauri().removeDir( baseMementosDir + '/' + id, { dir: this.tauri().BaseDirectory.App, recursive: true } )
 			this.resets( null ) // форсируем ресет
+		}
+	}
+	export class $memento_sidebar extends $.$memento_sidebar {
+		rows() {
+			let pages: $mol_view[] = []
+			let mementos = this.mementos() as $memento_page[]
+			mementos.forEach( ( page, index ) => {
+				const collection = this.Collection( page.data() + index )
+				pages.push(collection)
+			} )
+			return pages
 		}
 	}
 
