@@ -13,6 +13,7 @@ namespace $.$$ {
 			]
 		}
 
+		@$mol_mem
 		Spread() {
 			return this.spreads()[ this.spread() ]
 		}
@@ -53,7 +54,6 @@ namespace $.$$ {
 			return Math.random()
 		}
 
-		// pages
 		@$mol_mem
 		loadInfo() {
 			this.resets() // слушаем ресеты
@@ -72,27 +72,22 @@ namespace $.$$ {
 			this.resets( null ) // форсируем ресет
 		}
 
-		arrayRemove( arr: MementoInfo[], value: string ) {
-			return arr.filter( function( ele: MementoInfo ) {
-				return ele.title != value
-			} )
-		}
-
+		@$mol_mem
 		loadPages() {
 			let pages = []
 			for( const iterator of this.loadInfo() ) {
-				let page = iterator as MementoInfo
-				pages.push( this.Page( page ) )
+				pages.push( this.Page( iterator.name ) )
 			}
 			return pages
 		}
 
+		@$mol_mem
 		spreads() {
 			let pages = this.loadPages()
 			// simple search
 			let search = this.search().query()
 			return pages.filter( function( ele ) {
-				return ele !== undefined && ele.title().includes( search )
+				return ele.title().includes( search )
 			} )
 		}
 
