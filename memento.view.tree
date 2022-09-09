@@ -37,6 +37,10 @@ $memento_content $mol_book2_catalog
 		body /$mol_view
 			<= Text* $mol_textarea
 				value? <=> content*? \
+			<= Tags* $mol_select
+				align_hor \right
+				value?val <=> tag?val \
+				dictionary <= tags
 
 $memento_menu $mol_page
 	hided null

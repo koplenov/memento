@@ -12,7 +12,18 @@ namespace $.$$ {
 
 		@$mol_mem
 		mementos( val?: any ) {
-			return val
+			return val as $memento_page[]
+		}
+
+		@$mol_mem
+		tags() {
+			let tags = []
+			let pages = this.mementos()
+			for( const iterator of pages ) {
+				const data = iterator.data()
+				tags.push( ...data.tags )
+			}
+			return Array.from( [ ...new Set( tags ) ] )
 		}
 
 		@$mol_mem
@@ -151,8 +162,9 @@ namespace $.$$ {
 			let pages: $mol_view[] = []
 			let mementos = this.mementos() as $memento_page[]
 			mementos.forEach( ( page, index ) => {
-				const collection = this.Collection( page.data() + index )
-				pages.push(collection)
+				const collection = this.Collection( index )
+				collection.label = () => [ page.data().collection ]
+				pages.push( collection )
 			} )
 			return pages
 		}
