@@ -3,10 +3,9 @@ $memento $mol_view
 		<= Theme $mol_theme_auto
 	sub /
 		<= memento_sidebar $memento_sidebar
-			mementos?val <=> pages?val /
+			mementos <= pages
 		<= memento_content $memento_content
-			mementos?val <=> pages?val /
-	pages?val /
+			mementos => pages
 
 $memento_content $mol_book2_catalog
 	mementos null
