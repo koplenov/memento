@@ -168,6 +168,11 @@ namespace $.$$ {
 			} )
 			return pages
 		}
+
+		@$mol_mem
+		selected_collection( val?: any ) {
+			return val
+		}
 	}
 
 	interface MementoInfo {

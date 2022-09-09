@@ -3,8 +3,10 @@ $memento $mol_view
 		<= Theme $mol_theme_auto
 	sub /
 		<= memento_sidebar $memento_sidebar
+			selected_collection => current_collection
 			mementos <= pages
 		<= memento_content $memento_content
+			selected_collection <= current_collection
 			mementos => pages
 
 $memento_content $mol_book2_catalog
