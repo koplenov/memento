@@ -12,23 +12,16 @@ $memento $mol_view
 $memento_content $mol_book2_catalog
 	mementos null
 	Placeholder null
-	spreads /
-		<= Menu $memento_menu
-			head /
-				<= search $mol_search
-					hint \Введите ключ, тег или название
-				<= addBtn $mol_button_minor
-					event_click?val <=> addKeyFromSearch?val null
-					sub /
-						<= add_icon $mol_icon_plus
-						\Добавить
-			hided <= hided null
-			title <= menu_title \dasd
-			tools <= menu_tools /
-			foot <= menu_foot /
-			body /
-				<= Links $mol_list
-					rows <= links /
+	spreads <= loadPages
+	menu_head /
+		<= search $mol_search
+			query? <=> menu_filter? \
+			hint \Введите ключ, тег или название
+		<= addBtn $mol_button_minor
+			event_click?val <=> addKeyFromSearch?val null
+			sub /
+				<= add_icon $mol_icon_plus
+				\Добавить
 	Page*0 $memento_page
 		title <= page_title* \
 		tools / 

@@ -12,7 +12,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		mementos( val?: any ) {
-			return val as $memento_page[]
+			return val as $memento_page[] || []
 		}
 
 		@$mol_mem
@@ -26,27 +26,11 @@ namespace $.$$ {
 			return Array.from( [ ...new Set( tags ) ] )
 		}
 
-		@$mol_mem
-		pages() {
+		@ $mol_mem
+		menu_body() {
 			return [
-				this.Menu(),
-				...$mol_maybe( this.Spread() ),
+				this.Menu_links(),
 			]
-		}
-
-		@$mol_mem
-		Spread() {
-			return this.spreads()[ this.spread() ]
-		}
-
-		@$mol_mem
-		spread( next?: string ) {
-			return this.$.$mol_state_arg.value( this.param(), next ) ?? ''
-		}
-
-		@$mol_mem
-		links() {
-			return Object.keys( this.spreads() ).map( spread => this.Link( spread ) )
 		}
 
 		auto() {
@@ -113,17 +97,6 @@ namespace $.$$ {
 		@$mol_action
 		log( message?: any, ...optionalParams: any[] ) {
 			console.log( message, optionalParams )
-		}
-
-		@$mol_mem
-		spreads() {
-			let pages = this.loadPages()
-			this.mementos( pages )
-			// simple search
-			let search = this.search().query()
-			return pages.filter( function( ele ) {
-				return ele.title().includes( search )
-			} )
 		}
 
 		@$mol_mem_key
