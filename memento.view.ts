@@ -3,10 +3,31 @@ namespace $.$$ {
 	const contentMementoSpec: string = 'content.md'
 	const metaMementoSpec: string = 'meta.memento'
 
-	const MementoData = $mol_data_record( {
+	const MementoDTO = $mol_data_record( {
+		title: $mol_data_string,
+		md_content_path: $mol_data_string,
 		collection: $mol_data_optional( $mol_data_string ),
 		tags: $mol_data_optional( $mol_data_array( $mol_data_string ) ),
 	} )
+
+	export class Utils {
+		@$mol_action
+		static generateUUID() { // Public Domain/MIT
+			var d = new Date().getTime()//Timestamp
+			var d2 = ( ( typeof performance !== 'undefined' ) && performance.now && ( performance.now() * 1000 ) ) || 0//Time in microseconds since page-load or 0 if unsupported
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function( c ) {
+				var r = Math.random() * 16//random number between 0 and 16
+				if( d > 0 ) {//Use timestamp until depleted
+					r = ( d + r ) % 16 | 0
+					d = Math.floor( d / 16 )
+				} else {//Use microseconds since page-load if supported
+					r = ( d2 + r ) % 16 | 0
+					d2 = Math.floor( d2 / 16 )
+				}
+				return ( c === 'x' ? r : ( r & 0x3 | 0x8 ) ).toString( 16 )
+			} )
+		}
+	}
 
 	export class $memento_content extends $.$memento_content {
 
@@ -26,7 +47,7 @@ namespace $.$$ {
 			return Array.from( [ ...new Set( tags ) ] )
 		}
 
-		@ $mol_mem
+		@$mol_mem
 		menu_body() {
 			return [
 				this.Menu_links(),
@@ -37,7 +58,7 @@ namespace $.$$ {
 			this.$.$mol_lights( true )
 		}
 
-		@$mol_mem
+		@$mol_action
 		tauri_funcs() {
 			return $mol_wire_sync( { ...window.__TAURI__.fs } )
 		}
@@ -51,7 +72,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		page_title( id: any ) {
-			return id
+			return this.getMementoData(id).title
 		}
 
 		@$mol_mem
@@ -70,14 +91,17 @@ namespace $.$$ {
 				alert( "Попытка добавить пустую ссылку!" )
 				return
 			}
-			const path = baseMementosDir + '/' + id
+			const path = baseMementosDir + '/' + Utils.generateUUID()
 			this.tauri().createDir( path, { dir: this.tauri().BaseDirectory.App, recursive: true } )
-			this.tauri().writeTextFile( path + '/' + contentMementoSpec, 'write simple text here', { dir: this.tauri().BaseDirectory.App } )
 
-			let data = MementoData( {
+			let data = MementoDTO( {
+				title: 'blank title',
+				md_content_path: contentMementoSpec,
 				collection: 'GG',
 				tags: [ 'pp', 'gg' ]
 			} )
+
+			this.tauri().writeTextFile( path + '/' + data.md_content_path, id, { dir: this.tauri().BaseDirectory.App } )
 
 			this.tauri().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( data ), { dir: this.tauri().BaseDirectory.App } )
 			this.resets( null ) // форсируем ресет
@@ -102,15 +126,15 @@ namespace $.$$ {
 		@$mol_mem_key
 		content( id: any, next?: any ) {
 			const path = baseMementosDir + '/' + id
-			this.tauri().writeTextFile( path + '/' + contentMementoSpec, next, { dir: this.tauri().BaseDirectory.App } )
-			//return this.tauri().readTextFile( path + '/' + contentMementoSpec, { dir: this.tauri().BaseDirectory.App } )
-			return this.$.$mol_state_local.value( id, next ) ?? ''
+			const data = this.$.$mol_state_local.value( id, next ) ?? ''
+			this.tauri().writeTextFile( path + '/' + this.getMementoData( id ).md_content_path, data, { dir: this.tauri().BaseDirectory.App } )
+			return data
 		}
 
 		@$mol_mem
 		getMementoData( id?: string ) {
 			const path = baseMementosDir + '/' + id
-			return MementoData(
+			return MementoDTO(
 				JSON.parse(
 					this.tauri().readTextFile(
 						path + '/' + metaMementoSpec,
@@ -146,10 +170,5 @@ namespace $.$$ {
 		selected_collection( val?: any ) {
 			return val
 		}
-	}
-
-	interface MementoInfo {
-		title: string
-		content: string
 	}
 }
