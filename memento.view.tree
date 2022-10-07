@@ -23,7 +23,9 @@ $memento_content $mol_book2_catalog
 				<= add_icon $mol_icon_plus
 				\Добавить
 	Page*0 $memento_page
-		title <= page_title* \
+		title <= page_title*
+		Title <= titler* $mol_string
+			value?val <=> page_title*?val \
 		tools / 
 			<= removeMemento* $mol_button_minor
 				event_click? <=> removeMementoButton*? null

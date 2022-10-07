@@ -70,9 +70,17 @@ namespace $.$$ {
 			return tauri
 		}
 
-		@$mol_mem
-		page_title( id: any ) {
-			return this.getMementoData(id).title
+		// @$mol_mem_key
+		page_title( id: $memento_page, title?: any ) {
+			const path = baseMementosDir + '/' + id
+			const mementoDto = this.getMementoData( id )
+			const data = this.$.$mol_state_local.value( id + 'page_title', title ) ?? mementoDto.title
+			if( title !== undefined ) {
+				mementoDto.title = title
+				this.tauri().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( mementoDto ), { dir: this.tauri().BaseDirectory.App } )
+				return data
+			}
+			return data
 		}
 
 		@$mol_mem
@@ -126,12 +134,15 @@ namespace $.$$ {
 		@$mol_mem_key
 		content( id: any, next?: any ) {
 			const path = baseMementosDir + '/' + id
-			const data = this.$.$mol_state_local.value( id, next ) ?? ''
+			const data = this.$.$mol_state_local.value( id, next ) ?? this.tauri().readTextFile(
+				path + '/' + this.getMementoData( id ).md_content_path,
+				{ dir: this.tauri().BaseDirectory.App }
+			)
 			this.tauri().writeTextFile( path + '/' + this.getMementoData( id ).md_content_path, data, { dir: this.tauri().BaseDirectory.App } )
 			return data
 		}
 
-		@$mol_mem
+		@$mol_action
 		getMementoData( id?: string ) {
 			const path = baseMementosDir + '/' + id
 			return MementoDTO(
@@ -140,7 +151,7 @@ namespace $.$$ {
 						path + '/' + metaMementoSpec,
 						{ dir: this.tauri().BaseDirectory.App }
 					)
-				)
+				) as $mol_type_writable<typeof MementoDTO.Value>
 			)
 		}
 
