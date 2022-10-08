@@ -1,0 +1,19 @@
+{
+  "name": "memento",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd .. && npm start",
+    "tauri": "tauri"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitly.org/koplenov/memento"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.1.1"
+  }
+}
