@@ -70,10 +70,6 @@ namespace $.$$ {
 		tauri_fs() {
 			return $mol_wire_sync( { ...window.__TAURI__.fs } )
 		}
-		@$mol_action
-		tauri_fs_async() {
-			return window.__TAURI__.fs
-		}
 
 		@$mol_action
 		tauri_path() {
@@ -106,56 +102,54 @@ namespace $.$$ {
 		}
 
 		@$mol_mem_key
-		image_uri( id:any, imageUrl?: any ) {
+		image_uri( id: any, imageUrl?: any ) {
 			return imageUrl ?? 'default'
 		}
 
-		@$mol_mem
-		async page_images( id?: any ) {
+
+		page_images( id?: any ) {
 			const attachments = this.getMementoData( id ).attachments
 			if( attachments && attachments.images ) {
 				let images = []
 				for( const image of attachments.images ) {
-					const cachedImage = await this.cacheFile(id, image)
-					this.image_uri(id, cachedImage)
-					images.push( this.Image( id ) )
+					const cachedImage = this.cacheFile( id, image )
+					this.image_uri( image, cachedImage )
+					images.push( this.Image( image ) )
 				}
+				this.log(images)
 				return images
 			}
 			return null
 		}
 
-		@$mol_action
-		async cacheFile( id: any, imgUrl: string ) {
+		cacheFile( id: any, imgUrl: string ) {
 			const extension = 'png'
-			const fileName = `${$mol_hash_string(imgUrl)}.${extension}`
-			let fullpath = this.tauri_path().join(baseMementosDir, id, fileName)
-			let fullConvertPath = this.tauri_path().join(this.tauri_path().appDir(), fullpath)
+			const fileName = `${ $mol_hash_string( imgUrl ) }.${ extension }`
+			let fullpath = this.tauri_path().join( baseMementosDir, id, fileName )
+			let fullConvertPath = this.tauri_path().join( this.tauri_path().appDir(), fullpath )
 
 			if( this.tauri_fs().exists( fullpath, { dir: this.tauri().BaseDirectory.App } ) ) {
-				this.log('Load cached file') // сюда доходит
+				this.log( 'Load cached file', fullpath )
 			}
 			else {
-				this.log('Download file')
-				let blob = await (await(fetch(imgUrl))).blob()
-				const buffer = await blob.arrayBuffer()
-				const array = new Uint8Array( buffer )
-				await this.saveImage(array, fullpath )
+				this.log( 'Download file', imgUrl )
+				const arrayBuffer = $mol_fetch.buffer(imgUrl)
+				this.saveImage( arrayBuffer, fullpath )
 			}
-			return await this.tauri_tauri().convertFileSrc(fullConvertPath)
+			return this.tauri_tauri().convertFileSrc( fullConvertPath )
 		}
 
-		async saveImage(blob: any, fullpath: string) {
-			await this.tauri_fs_async().writeBinaryFile(
-			  {
-				contents: blob,
-				path: fullpath,
-			  },
-			  {
-				dir:  this.tauri().BaseDirectory.App,
-			  }
-			);
-		  };
+		saveImage( blob: any, fullpath: string ) {
+			this.tauri_fs().writeBinaryFile(
+				{
+					contents: blob,
+					path: fullpath,
+				},
+				{
+					dir: this.tauri().BaseDirectory.App,
+				}
+			)
+		};
 
 		@$mol_mem
 		resets( reset?: null ) {
@@ -203,9 +197,9 @@ namespace $.$$ {
 
 			let data = new MementoDTO()
 			data.title = 'blank title',
-			data.md_content_path = contentMementoSpec,
-			data.nav = JSON.stringify( id ),
-			data.collection = 'GG'
+				data.md_content_path = contentMementoSpec,
+				data.nav = JSON.stringify( id ),
+				data.collection = 'GG'
 			data.tags = [ 'pp', 'gg' ]
 
 			this.log( extractedData )
