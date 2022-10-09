@@ -1,42 +1,4 @@
 namespace $.$$ {
-	const baseMementosDir: string = 'mementos'
-	const contentMementoSpec: string = 'content.md'
-	const metaMementoSpec: string = 'meta.memento'
-
-	const vktoken: string = 'vk1.a.ifJQdpy6zOmN5kYkkt7JUgBMeE1YoyDxMvN0yGGbXUazaK8mMK9U3VxOClCPz7eKj4baV5FfcIowFUGdqU3v6ynFnw1Sa004E-EpRq9JKbFHG0uRzvM7wor4JbTz-LIAAD-2arkczWo0NJXijA05gFauLqzKYFe_HrL6zpDM96KR4NDQk3iMImzixZ3a0FQ3'
-
-	class MementoDTO {
-		title?: string = undefined
-		md_content_path?: string = undefined
-		nav?: string = undefined
-		attachments?: Attachments = undefined
-		collection?: string = undefined
-		tags?: string[] = undefined
-	}
-
-	class Attachments {
-		images: string[] = []
-	}
-
-	export class Utils {
-		@$mol_action
-		static generateUUID() { // Public Domain/MIT
-			var d = new Date().getTime()//Timestamp
-			var d2 = ( ( typeof performance !== 'undefined' ) && performance.now && ( performance.now() * 1000 ) ) || 0//Time in microseconds since page-load or 0 if unsupported
-			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function( c ) {
-				var r = Math.random() * 16//random number between 0 and 16
-				if( d > 0 ) {//Use timestamp until depleted
-					r = ( d + r ) % 16 | 0
-					d = Math.floor( d / 16 )
-				} else {//Use microseconds since page-load if supported
-					r = ( d2 + r ) % 16 | 0
-					d2 = Math.floor( d2 / 16 )
-				}
-				return ( c === 'x' ? r : ( r & 0x3 | 0x8 ) ).toString( 16 )
-			} )
-		}
-	}
-
 	export class $memento_content extends $.$memento_content {
 
 		@$mol_mem
@@ -66,28 +28,6 @@ namespace $.$$ {
 			this.$.$mol_lights( true )
 		}
 
-		@$mol_action
-		tauri_fs() {
-			return $mol_wire_sync( { ...window.__TAURI__.fs } )
-		}
-
-		@$mol_action
-		tauri_path() {
-			return $mol_wire_sync( { ...window.__TAURI__.path } )
-		}
-
-		@$mol_action
-		tauri_tauri() {
-			return $mol_wire_sync( { ...window.__TAURI__.tauri } )
-		}
-
-		@$mol_mem
-		tauri() {
-			const tauri = this.tauri_fs()
-			tauri.createDir( baseMementosDir, { dir: this.tauri_fs().BaseDirectory.App, recursive: true } )
-			return tauri
-		}
-
 		// @$mol_mem_key
 		page_title( id: $memento_page, title?: any ) {
 			const path = baseMementosDir + '/' + id
@@ -95,7 +35,7 @@ namespace $.$$ {
 			const data = this.$.$mol_state_local.value( id + 'page_title', title ) ?? mementoDto.title
 			if( title !== undefined ) {
 				mementoDto.title = title
-				this.tauri().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( mementoDto ), { dir: this.tauri().BaseDirectory.App } )
+				$memento_tauri.fs().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( mementoDto ), { dir: $memento_tauri.base().BaseDirectory.App } )
 				return data
 			}
 			return data
@@ -125,10 +65,10 @@ namespace $.$$ {
 		cacheFile( id: any, imgUrl: string ) {
 			const extension = 'png'
 			const fileName = `${ $mol_hash_string( imgUrl ) }.${ extension }`
-			let fullpath = this.tauri_path().join( baseMementosDir, id, fileName )
-			let fullConvertPath = this.tauri_path().join( this.tauri_path().appDir(), fullpath )
+			let fullpath = $memento_tauri.path().join( baseMementosDir, id, fileName )
+			let fullConvertPath = $memento_tauri.path().join( $memento_tauri.path().appDir(), fullpath )
 
-			if( this.tauri_fs().exists( fullpath, { dir: this.tauri().BaseDirectory.App } ) ) {
+			if( $memento_tauri.fs().exists( fullpath, { dir: $memento_tauri.base().BaseDirectory.App } ) ) {
 				this.log( 'Load cached file', fullpath )
 			}
 			else {
@@ -136,17 +76,17 @@ namespace $.$$ {
 				const arrayBuffer = $mol_fetch.buffer(imgUrl)
 				this.saveImage( arrayBuffer, fullpath )
 			}
-			return this.tauri_tauri().convertFileSrc( fullConvertPath )
+			return $memento_tauri.tauri().convertFileSrc( fullConvertPath )
 		}
 
 		saveImage( blob: any, fullpath: string ) {
-			this.tauri_fs().writeBinaryFile(
+			$memento_tauri.fs().writeBinaryFile(
 				{
 					contents: blob,
 					path: fullpath,
 				},
 				{
-					dir: this.tauri().BaseDirectory.App,
+					dir: $memento_tauri.base().BaseDirectory.App,
 				}
 			)
 		};
@@ -159,7 +99,7 @@ namespace $.$$ {
 		@$mol_mem
 		loadInfo() {
 			this.resets() // слушаем ресеты
-			return this.tauri().readDir( baseMementosDir, { dir: this.tauri().BaseDirectory.App, recursive: true } )
+			return $memento_tauri.fs().readDir( baseMementosDir, { dir: $memento_tauri.base().BaseDirectory.App, recursive: true } )
 		}
 
 		@$mol_mem
@@ -192,8 +132,8 @@ namespace $.$$ {
 				}
 			}
 
-			const path = baseMementosDir + '/' + Utils.generateUUID()
-			this.tauri().createDir( path, { dir: this.tauri().BaseDirectory.App, recursive: true } )
+			const path = baseMementosDir + '/' + $memento_utils.generateUUID()
+			$memento_tauri.fs().createDir( path, { dir: $memento_tauri.base().BaseDirectory.App, recursive: true } )
 
 			let data = new MementoDTO()
 			data.title = 'blank title',
@@ -217,9 +157,9 @@ namespace $.$$ {
 				}
 				extractedData = JSON.stringify( extractedData )
 			}
-			this.tauri().writeTextFile( path + '/' + data.md_content_path, extractedData, { dir: this.tauri().BaseDirectory.App } )
+			$memento_tauri.fs().writeTextFile( path + '/' + data.md_content_path, extractedData, { dir: $memento_tauri.base().BaseDirectory.App } )
 
-			this.tauri().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( data ), { dir: this.tauri().BaseDirectory.App } )
+			$memento_tauri.fs().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( data ), { dir: $memento_tauri.base().BaseDirectory.App } )
 			this.resets( null ) // форсируем ресет
 		}
 
@@ -242,11 +182,11 @@ namespace $.$$ {
 		@$mol_mem_key
 		content( id: any, next?: any ) {
 			const path = baseMementosDir + '/' + id
-			const data = this.$.$mol_state_local.value( id, next ) ?? this.tauri().readTextFile(
+			const data = this.$.$mol_state_local.value( id, next ) ?? $memento_tauri.base().readTextFile(
 				path + '/' + this.getMementoData( id ).md_content_path,
-				{ dir: this.tauri().BaseDirectory.App }
+				{ dir: $memento_tauri.base().BaseDirectory.App }
 			)
-			this.tauri().writeTextFile( path + '/' + this.getMementoData( id ).md_content_path, data, { dir: this.tauri().BaseDirectory.App } )
+			$memento_tauri.fs().writeTextFile( path + '/' + this.getMementoData( id ).md_content_path, data, { dir: $memento_tauri.base().BaseDirectory.App } )
 			return data
 		}
 
@@ -254,11 +194,11 @@ namespace $.$$ {
 		getMementoData( id?: string ) {
 			const path = baseMementosDir + '/' + id
 			const data = JSON.parse(
-				this.tauri().readTextFile(
+				$memento_tauri.fs().readTextFile(
 					path + '/' + metaMementoSpec,
-					{ dir: this.tauri().BaseDirectory.App }
+					{ dir: $memento_tauri.base().BaseDirectory.App }
 				) )
-			return data as MementoDTO//Object.setPrototypeOf( data, MementoDTO.prototype ) as MementoDTO
+			return data as MementoDTO
 		}
 
 		addKeyFromSearch() {
@@ -267,25 +207,8 @@ namespace $.$$ {
 
 		@$mol_mem_key
 		removeMementoButton( id: any, next?: any ) {
-			this.tauri().removeDir( baseMementosDir + '/' + id, { dir: this.tauri().BaseDirectory.App, recursive: true } )
+			$memento_tauri.fs().removeDir( baseMementosDir + '/' + id, { dir: $memento_tauri.base().BaseDirectory.App, recursive: true } )
 			this.resets( null ) // форсируем ресет
-		}
-	}
-	export class $memento_sidebar extends $.$memento_sidebar {
-		rows() {
-			let pages: $mol_view[] = []
-			let mementos = this.mementos() as $memento_page[]
-			mementos.forEach( ( page, index ) => {
-				const collection = this.Collection( index )
-				collection.label = () => [ page.data().collection ]
-				pages.push( collection )
-			} )
-			return pages
-		}
-
-		@$mol_mem
-		selected_collection( val?: any ) {
-			return val
 		}
 	}
 }
