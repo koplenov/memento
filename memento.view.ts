@@ -3,12 +3,20 @@ namespace $.$$ {
 	const contentMementoSpec: string = 'content.md'
 	const metaMementoSpec: string = 'meta.memento'
 
-	const MementoDTO = $mol_data_record( {
-		title: $mol_data_string,
-		md_content_path: $mol_data_string,
-		collection: $mol_data_optional( $mol_data_string ),
-		tags: $mol_data_optional( $mol_data_array( $mol_data_string ) ),
-	} )
+	const vktoken: string = 'vk1.a.ifJQdpy6zOmN5kYkkt7JUgBMeE1YoyDxMvN0yGGbXUazaK8mMK9U3VxOClCPz7eKj4baV5FfcIowFUGdqU3v6ynFnw1Sa004E-EpRq9JKbFHG0uRzvM7wor4JbTz-LIAAD-2arkczWo0NJXijA05gFauLqzKYFe_HrL6zpDM96KR4NDQk3iMImzixZ3a0FQ3'
+
+	class MementoDTO {
+		title?: string = undefined
+		md_content_path?: string = undefined
+		nav?: string = undefined
+		attachments?: Attachments = undefined
+		collection?: string = undefined
+		tags?: string[] = undefined
+	}
+
+	class Attachments {
+		images: string[] = []
+	}
 
 	export class Utils {
 		@$mol_action
@@ -59,14 +67,28 @@ namespace $.$$ {
 		}
 
 		@$mol_action
-		tauri_funcs() {
+		tauri_fs() {
 			return $mol_wire_sync( { ...window.__TAURI__.fs } )
+		}
+		@$mol_action
+		tauri_fs_async() {
+			return window.__TAURI__.fs
+		}
+
+		@$mol_action
+		tauri_path() {
+			return $mol_wire_sync( { ...window.__TAURI__.path } )
+		}
+
+		@$mol_action
+		tauri_tauri() {
+			return $mol_wire_sync( { ...window.__TAURI__.tauri } )
 		}
 
 		@$mol_mem
 		tauri() {
-			const tauri = this.tauri_funcs()
-			tauri.createDir( baseMementosDir, { dir: this.tauri_funcs().BaseDirectory.App, recursive: true } )
+			const tauri = this.tauri_fs()
+			tauri.createDir( baseMementosDir, { dir: this.tauri_fs().BaseDirectory.App, recursive: true } )
 			return tauri
 		}
 
@@ -83,6 +105,58 @@ namespace $.$$ {
 			return data
 		}
 
+		@$mol_mem_key
+		image_uri( id:any, imageUrl?: any ) {
+			return imageUrl ?? 'default'
+		}
+
+		@$mol_mem
+		async page_images( id?: any ) {
+			const attachments = this.getMementoData( id ).attachments
+			if( attachments && attachments.images ) {
+				let images = []
+				for( const image of attachments.images ) {
+					const cachedImage = await this.cacheFile(id, image)
+					this.image_uri(id, cachedImage)
+					images.push( this.Image( id ) )
+				}
+				return images
+			}
+			return null
+		}
+
+		@$mol_action
+		async cacheFile( id: any, imgUrl: string ) {
+			const extension = 'png'
+			const fileName = `${$mol_hash_string(imgUrl)}.${extension}`
+			let fullpath = this.tauri_path().join(baseMementosDir, id, fileName)
+			let fullConvertPath = this.tauri_path().join(this.tauri_path().appDir(), fullpath)
+
+			if( this.tauri_fs().exists( fullpath, { dir: this.tauri().BaseDirectory.App } ) ) {
+				this.log('Load cached file') // сюда доходит
+			}
+			else {
+				this.log('Download file')
+				let blob = await (await(fetch(imgUrl))).blob()
+				const buffer = await blob.arrayBuffer()
+				const array = new Uint8Array( buffer )
+				await this.saveImage(array, fullpath )
+			}
+			return await this.tauri_tauri().convertFileSrc(fullConvertPath)
+		}
+
+		async saveImage(blob: any, fullpath: string) {
+			await this.tauri_fs_async().writeBinaryFile(
+			  {
+				contents: blob,
+				path: fullpath,
+			  },
+			  {
+				dir:  this.tauri().BaseDirectory.App,
+			  }
+			);
+		  };
+
 		@$mol_mem
 		resets( reset?: null ) {
 			return Math.random()
@@ -94,22 +168,62 @@ namespace $.$$ {
 			return this.tauri().readDir( baseMementosDir, { dir: this.tauri().BaseDirectory.App, recursive: true } )
 		}
 
+		@$mol_mem
+		vk() {
+			return new $memento_lib_vk( vktoken )
+		}
+
+		@$mol_action
+		alert( message: string ) {
+			alert( message )
+		}
+
 		addMemento( id: string ) {
 			if( id.trim() === "" ) {
-				alert( "Попытка добавить пустую ссылку!" )
+				this.alert( "Попытка добавить пустую ссылку!" )
 				return
 			}
+
+			let extractedData = id
+			let extracted: boolean = false
+
+			// link detect
+			if( id.includes( 'vk.com' ) ) {
+				if( id.includes( 'wall' ) ) {
+					const wall = id.split( 'wall' ).at( -1 ) ?? null
+					if( wall ) {
+						extracted = true
+						extractedData = this.vk().wall( wall )
+					}
+				}
+			}
+
 			const path = baseMementosDir + '/' + Utils.generateUUID()
 			this.tauri().createDir( path, { dir: this.tauri().BaseDirectory.App, recursive: true } )
 
-			let data = MementoDTO( {
-				title: 'blank title',
-				md_content_path: contentMementoSpec,
-				collection: 'GG',
-				tags: [ 'pp', 'gg' ]
-			} )
+			let data = new MementoDTO()
+			data.title = 'blank title',
+			data.md_content_path = contentMementoSpec,
+			data.nav = JSON.stringify( id ),
+			data.collection = 'GG'
+			data.tags = [ 'pp', 'gg' ]
 
-			this.tauri().writeTextFile( path + '/' + data.md_content_path, id, { dir: this.tauri().BaseDirectory.App } )
+			this.log( extractedData )
+			if( extracted ) {
+				const post = extractedData[ 0 ] as any
+				data.title = post.text
+				if( post.attachments ) {
+					const attachments = new Attachments()
+					for( const attachment of post.attachments ) {
+						if( attachment.type === "photo" ) {
+							attachments.images.push( attachment.photo.sizes.at( -1 ).url )
+						}
+					}
+					data.attachments = attachments
+				}
+				extractedData = JSON.stringify( extractedData )
+			}
+			this.tauri().writeTextFile( path + '/' + data.md_content_path, extractedData, { dir: this.tauri().BaseDirectory.App } )
 
 			this.tauri().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( data ), { dir: this.tauri().BaseDirectory.App } )
 			this.resets( null ) // форсируем ресет
@@ -145,14 +259,12 @@ namespace $.$$ {
 		@$mol_action
 		getMementoData( id?: string ) {
 			const path = baseMementosDir + '/' + id
-			return MementoDTO(
-				JSON.parse(
-					this.tauri().readTextFile(
-						path + '/' + metaMementoSpec,
-						{ dir: this.tauri().BaseDirectory.App }
-					)
-				) as $mol_type_writable<typeof MementoDTO.Value>
-			)
+			const data = JSON.parse(
+				this.tauri().readTextFile(
+					path + '/' + metaMementoSpec,
+					{ dir: this.tauri().BaseDirectory.App }
+				) )
+			return data as MementoDTO//Object.setPrototypeOf( data, MementoDTO.prototype ) as MementoDTO
 		}
 
 		addKeyFromSearch() {

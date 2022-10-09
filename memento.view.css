@@ -44,3 +44,7 @@
 [mol_link] {
 	color: #363636;
 }
+
+[memento_content_text] {
+	display:none;
+}

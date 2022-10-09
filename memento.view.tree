@@ -34,11 +34,14 @@ $memento_content $mol_book2_catalog
 		body /$mol_view
 			<= Text* $mol_textarea
 				value? <=> content*? \
+			<= Images* $mol_list
+				rows <= page_images*?
 			<= Tags* $mol_select
 				align_hor \right
 				value?val <=> tag?val \
 				dictionary <= tags
-
+	Image*0 $mol_image
+		uri <= image_uri* \https://sun7-15.userapi.com/impf/c845418/v845418602/140503/zW9o4AS8vlk.jpg?size=720x540&quality=96&sign=5c5c3300e0a87aef04e403c3cc00494a&c_uniq_tag=G_ftdLPJOVpQ-YtUderDBeM1_lC9IA9QUr60A-66E3U&type=album
 $memento_menu $mol_page
 	hided null
 	attr *
