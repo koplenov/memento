@@ -29,7 +29,7 @@ namespace $.$$ {
 		}
 
 		// @$mol_mem_key
-		page_title( id: $memento_page, title?: any ) {
+		page_title( id: string, title?: any ) {
 			const path = baseMementosDir + '/' + id
 			const mementoDto = this.getMementoData( id )
 			const data = this.$.$mol_state_local.value( id + 'page_title', title ) ?? mementoDto.title
@@ -41,11 +41,27 @@ namespace $.$$ {
 			return data
 		}
 
+
+
+		@$mol_mem_key
+		item_title( id: number ) {
+			return this.page_title( this.loadPages()[ id ].data().id )
+			//return this.loadPages()[id].data().title
+		}
+		@$mol_mem_key
+		item_description( id: number ) {
+			return this.loadPages()[ id ].data().description
+		}
+		timestamp() {
+			return new $mol_time_moment().toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
+		}
+
+
+
 		@$mol_mem_key
 		image_uri( id: any, imageUrl?: any ) {
 			return imageUrl ?? 'default'
 		}
-
 
 		page_images( id?: any ) {
 			const attachments = this.getMementoData( id ).attachments
@@ -56,7 +72,7 @@ namespace $.$$ {
 					this.image_uri( image, cachedImage )
 					images.push( this.Image( image ) )
 				}
-				this.log(images)
+				this.log( images )
 				return images
 			}
 			return null
@@ -73,7 +89,7 @@ namespace $.$$ {
 			}
 			else {
 				this.log( 'Download file', imgUrl )
-				const arrayBuffer = $mol_fetch.buffer(imgUrl)
+				const arrayBuffer = $mol_fetch.buffer( imgUrl )
 				this.saveImage( arrayBuffer, fullpath )
 			}
 			return $memento_tauri.tauri().convertFileSrc( fullConvertPath )
@@ -118,13 +134,14 @@ namespace $.$$ {
 				return
 			}
 
-			let extractedData = id
+			let extractedData: any = id
 			let extracted: boolean = false
 
 			// link detect
 			if( id.includes( 'vk.com' ) ) {
-				if( id.includes( 'wall' ) ) {
-					const wall = id.split( 'wall' ).at( -1 ) ?? null
+				const url = id.split( '?hash' )[ 0 ]
+				if( url.includes( 'wall' ) ) {
+					const wall = url.split( 'wall' ).at( -1 ) ?? null
 					if( wall ) {
 						extracted = true
 						extractedData = this.vk().wall( wall )
@@ -132,20 +149,28 @@ namespace $.$$ {
 				}
 			}
 
-			const path = baseMementosDir + '/' + $memento_utils.generateUUID()
+			const uid = $memento_utils.generateUUID()
+			const path = baseMementosDir + '/' + uid
 			$memento_tauri.fs().createDir( path, { dir: $memento_tauri.base().BaseDirectory.App, recursive: true } )
 
 			let data = new MementoDTO()
+			data.id = uid
 			data.title = 'blank title',
 				data.md_content_path = contentMementoSpec,
 				data.nav = JSON.stringify( id ),
 				data.collection = 'GG'
 			data.tags = [ 'pp', 'gg' ]
 
+			let content
+
+			this.log( extractedData )
+			this.log( extractedData )
 			this.log( extractedData )
 			if( extracted ) {
-				const post = extractedData[ 0 ] as any
-				data.title = post.text
+				const post = extractedData.items[ 0 ] as any
+				data.title = $memento_utils.title_from_post( extractedData )
+				data.description = $memento_utils.description( post.text )
+				content = post.text
 				if( post.attachments ) {
 					const attachments = new Attachments()
 					for( const attachment of post.attachments ) {
@@ -157,7 +182,7 @@ namespace $.$$ {
 				}
 				extractedData = JSON.stringify( extractedData )
 			}
-			$memento_tauri.fs().writeTextFile( path + '/' + data.md_content_path, extractedData, { dir: $memento_tauri.base().BaseDirectory.App } )
+			$memento_tauri.fs().writeTextFile( path + '/' + data.md_content_path, content, { dir: $memento_tauri.base().BaseDirectory.App } )
 
 			$memento_tauri.fs().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( data ), { dir: $memento_tauri.base().BaseDirectory.App } )
 			this.resets( null ) // форсируем ресет

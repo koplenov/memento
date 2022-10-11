@@ -23,7 +23,7 @@ namespace $ {
 		
 		@$mol_action
 		wall(wallId: string) {
-			const url = `${this.apiUrl()}wall.getById?posts=${wallId}&access_token=${this.accessToken()}&v=${this.version()}`
+			const url = `${this.apiUrl()}wall.getById?posts=${wallId}&access_token=${this.accessToken()}&extended=1&v=${this.version()}`
 			return this.tauri_net_funcs().fetch(url).data.response
 		}
 

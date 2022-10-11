@@ -16,5 +16,27 @@ namespace $.$$ {
 				return ( c === 'x' ? r : ( r & 0x3 | 0x8 ) ).toString( 16 )
 			} )
 		}
+
+		@$mol_action
+		static description( text: string ) {
+			return text.split( /\r?\n/ )[ 0 ]
+		}
+
+		@$mol_action
+		static title_from_post( data: any ) {
+			let title
+
+			const group = data.groups[ 0 ]
+			if( group ) {
+				title = group.name
+			}
+
+			const profile = data.profiles[ 0 ]
+			if( profile ) {
+				title = `${ profile.first_name } ${ profile.last_name }`
+			}
+
+			return title
+		}
 	}
 }

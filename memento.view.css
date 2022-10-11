@@ -23,7 +23,7 @@
 	margin-left: -1px;
 }
 
-[memento_memento_content_links]{
+[memento_memento_content_links] {
 	padding: 0px;
 }
 
@@ -45,6 +45,37 @@
 	color: #363636;
 }
 
+/*
 [memento_content_text] {
 	display:none;
+}
+*/
+
+
+[memento_item_text],
+[memento_item_text_content] {
+	width: 100%;
+}
+
+[memento_item_text_title_container] {
+	justify-content: space-between;
+}
+
+[memento_memento_content_memento_item_ico] {
+	margin-right: 1rem;
+}
+
+[memento_content_menu_link],
+[memento_content_menu_body] {
+	padding: 0px;
+}
+
+[memento_content_memento_item_title_container] {
+	padding-bottom: .5rem;
+}
+
+[memento_memento_content_memento_item_content] {
+	padding: 1rem;
+	border: none;
+	border-bottom: 1px solid #969696;
 }
