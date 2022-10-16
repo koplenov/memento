@@ -75,7 +75,7 @@ namespace $.$$ {
 				this.log( images )
 				return images
 			}
-			return null
+			return []
 		}
 
 		cacheFile( id: any, imgUrl: string ) {

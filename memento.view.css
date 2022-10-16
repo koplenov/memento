@@ -45,12 +45,10 @@
 	color: #363636;
 }
 
-/*
 [memento_content_text] {
-	display:none;
+	flex: none;
+	height:fit-content;
 }
-*/
-
 
 [memento_item_text],
 [memento_item_text_content] {
