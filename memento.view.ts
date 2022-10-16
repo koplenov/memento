@@ -1,6 +1,24 @@
 namespace $.$$ {
 	export class $memento_content extends $.$memento_content {
 
+		menu_link_content(id: any) {
+			let extistImages = false;
+			let extistDescription = false;
+
+			const pageData = this.loadPages()[ id ].data()
+			const attachments = pageData.attachments
+			const text = pageData.description
+
+			if( attachments && attachments.images && Object.keys(attachments.images).length > 0 ) extistImages = true
+			if( text && text.trim() !== "" ) extistDescription = true
+
+			if(!extistDescription && extistImages) return [this.memento_item_images(id)]
+			if(extistDescription && !extistImages) return [this.memento_item_text(id)]
+			if(extistDescription && extistImages) return [this.memento_item_card(id)]
+
+			return ["not implement"]
+		}
+
 		@$mol_mem
 		mementos( val?: any ) {
 			return val as $memento_page[] || []
@@ -51,6 +69,14 @@ namespace $.$$ {
 		@$mol_mem_key
 		item_description( id: number ) {
 			return this.loadPages()[ id ].data().description
+		}
+		@$mol_mem_key
+		item_images( id: number ) {
+			return this.page_images(this.loadPages()[ id ].data().id)
+			
+			const attachments = this.loadPages()[ id ].data().attachments
+			if( attachments && attachments.images ) return attachments.images
+			else return []
 		}
 		timestamp() {
 			return new $mol_time_moment().toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )

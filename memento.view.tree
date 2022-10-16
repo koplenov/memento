@@ -22,12 +22,23 @@ $memento_content $mol_book2_catalog
 			sub /
 				<= add_icon $mol_icon_plus
 				\Добавить
-	menu_link_content* / 
-		<= memento_item* $memento_item_text
-			id <= item_title*
-			date <= timestamp*
-			title <= item_title*
-			description <= item_description*
+	memento_item_text* $memento_item_text
+		id <= item_title*
+		date <= timestamp*
+		title <= item_title*
+		description <= item_description*
+	memento_item_images* $memento_item_images
+		id <= item_title*
+		date <= timestamp*
+		title <= item_title*
+		description <= item_description*
+		images <= item_images*
+	memento_item_card* $memento_item_card
+		id <= item_title*
+		date <= timestamp*
+		title <= item_title*
+		description <= item_description*
+		images <= item_images*
 	Page*0 $memento_page
 		title <= page_title*
 		Title <= titler* $mol_string
@@ -59,6 +70,36 @@ $memento_page $mol_page
 
 $memento_item $mol_view
 $memento_item_text $memento_item
+	sub /
+		<= content $mol_list
+			rows /
+				<= Title_container $mol_view
+					sub /
+						<= Label $mol_view
+							sub /
+								<= Ico $mol_avatar id <= id \
+								<= Title $mol_paragraph
+									title <= title \title
+						<= date \
+				<= Description $mol_paragraph
+					title <= description \description
+
+$memento_item_images $memento_item
+	sub /
+		<= content $mol_list
+			rows /
+				<= Title_container $mol_view
+					sub /
+						<= Label $mol_view
+							sub /
+								<= Ico $mol_avatar id <= id \
+								<= Title $mol_paragraph
+									title <= title \title
+						<= date \
+				<= container $mol_view
+					sub <= images
+
+$memento_item_card $memento_item
 	sub /
 		<= content $mol_list
 			rows /
