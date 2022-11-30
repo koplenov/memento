@@ -4,9 +4,11 @@ $memento $mol_view
 	sub /
 		<= memento_sidebar $memento_sidebar
 			selected_collection => current_collection
+			selected_tag => current_tag
 			mementos <= pages
 		<= memento_content $memento_content
 			selected_collection <= current_collection
+			selected_tag <= current_tag
 			mementos => pages
 
 $memento_content $mol_book2_catalog
@@ -131,14 +133,18 @@ $memento_sidebar $mol_list
 			title \Все материалы
 		<= unsortedMaterials $mol_button_minor
 			title \Неотсортированные
-		<= collections $mol_view
+		<= collections_block $mol_list
 			sub /
-				<= asddwadwd $mol_paragraph
-					title \Коллекции
-				<= pensil_button $mol_button_minor
-					sub / <= pensil_icon $mol_icon_lead_pencil
-				<= plus_button $mol_button_minor
-					sub / <= plus_icon $mol_icon_plus
+				<= collections_title $mol_view
+					sub /
+						<= asddwadwd $mol_paragraph
+							title \Коллекции
+						<= pensil_button $mol_button_minor
+							sub / <= pensil_icon $mol_icon_lead_pencil
+						<= plus_button $mol_button_minor
+							sub / <= plus_icon $mol_icon_plus
+				<= collections_list $mol_list
+					rows <= collections null
 		<= memes $mol_expander
 			label / \Мемы
 			content /
@@ -148,32 +154,9 @@ $memento_sidebar $mol_list
 				<= dashboards $mol_expander
 					label / \Dashboards
 					content /
-		<= dashboards1 $mol_expander
-			label / \Dashboards
-			content /
-		<= dashboards2 $mol_expander
-			label / \Dashboards
-			content /
-		<= dashboards3 $mol_expander
-			label / \Dashboards
-			content /
-		<= tags $mol_view
-			sub /
+		<= tags_block $mol_list
+			rows /
 				<= tags_label $mol_paragraph
 					title \ТЕГИ
-		<= asdasd1 $mol_button_minor
-			sub /
-				<= asdasd1_logo $mol_icon_tag
-				\Dashboards
-		<= asdasd2 $mol_button_minor
-			sub /
-				<= asdasd2_logo $mol_icon_tag
-				\qwe tyu yui yu...
-		<= asdasd3 $mol_button_minor
-			sub /
-				<= asdasd3_logo $mol_icon_tag
-				\Dashboards
-		<= asdasd4 $mol_button_minor
-			sub /
-				<= asdasd4_logo $mol_icon_tag
-				\Dashboards
+				<= tags_list $mol_list
+					rows <= tags null

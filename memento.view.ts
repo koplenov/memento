@@ -20,22 +20,6 @@ namespace $.$$ {
 		}
 
 		@$mol_mem
-		mementos( val?: any ) {
-			return val as $memento_page[] || []
-		}
-
-		@$mol_mem
-		tags() {
-			let tags = []
-			let pages = this.mementos()
-			for( const iterator of pages ) {
-				const data = iterator.data()
-				tags.push( ...data.tags )
-			}
-			return Array.from( [ ...new Set( tags ) ] )
-		}
-
-		@$mol_mem
 		menu_body() {
 			return [
 				this.Menu_links(),
@@ -217,10 +201,25 @@ namespace $.$$ {
 		@$mol_mem
 		loadPages() {
 			let pages = []
+			for( const page of this.loadAllPages() ) {
+				if (this.selected_tag()){
+					if((page.data() as MementoDTO).tags?.some(v => v.toLowerCase().includes(this.selected_tag().toLowerCase()))) {
+						pages.push( page );
+					}
+				} else {
+					pages.push( page );
+				}
+			}
+			return pages
+		}
+
+		@$mol_mem
+		loadAllPages() {
+			let pages = []
 			for( const iterator of this.loadInfo() ) {
 				const page = this.Page( iterator.name )
-				page.data = () => this.getMementoData( iterator.name )
-				pages.push( page )
+				page.data = () => this.getMementoData( iterator.name );
+				pages.push( page );
 			}
 			return pages
 		}
@@ -260,6 +259,30 @@ namespace $.$$ {
 		removeMementoButton( id: any, next?: any ) {
 			$memento_tauri.fs().removeDir( baseMementosDir + '/' + id, { dir: $memento_tauri.base().BaseDirectory.App, recursive: true } )
 			this.resets( null ) // форсируем ресет
+		}
+
+
+
+		@$mol_mem
+		mementos( val?: any ) {
+			return this.loadAllPages()
+			return val as $memento_page[] || []
+		}
+		
+		@$mol_mem
+		tags() {
+			let tags = []
+			let pages = this.mementos()
+			for( const iterator of pages ) {
+				const data = iterator.data()
+				tags.push( ...data.tags )
+			}
+			return Array.from( [ ...new Set( tags ) ] )
+		}
+
+		@$mol_mem
+		selected_tag( val?: any ) {
+			return val
 		}
 	}
 }
