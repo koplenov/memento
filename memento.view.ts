@@ -62,8 +62,9 @@ namespace $.$$ {
 			if( attachments && attachments.images ) return attachments.images
 			else return []
 		}
-		timestamp() {
-			return new $mol_time_moment().toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
+		@$mol_mem_key
+		timestamp(id: number) {
+			return new $mol_time_moment(this.loadPages()[ id ].data().date * 1000).toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
 		}
 
 
@@ -165,6 +166,7 @@ namespace $.$$ {
 
 			let data = new MementoDTO()
 			data.id = uid
+			data.date = new $mol_time_moment().valueOf();
 			data.title = 'blank title',
 				data.md_content_path = contentMementoSpec,
 				data.nav = JSON.stringify( id ),
@@ -173,11 +175,11 @@ namespace $.$$ {
 
 			let content
 
-			this.log( extractedData )
-			this.log( extractedData )
-			this.log( extractedData )
+			// this.log( extractedData )
 			if( extracted ) {
 				const post = extractedData.items[ 0 ] as any
+				this.log("page", post.date)
+				data.date = post.date;
 				data.title = $memento_utils.title_from_post( extractedData )
 				data.description = $memento_utils.description( post.text )
 				content = post.text

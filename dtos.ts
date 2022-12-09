@@ -1,6 +1,7 @@
 namespace $.$$ {
 	export class MementoDTO {
 		id: string = ''
+		date: number = 0
 		title?: string = undefined
 		description?: string = undefined
 		md_content_path?: string = undefined
