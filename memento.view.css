@@ -109,3 +109,12 @@
 [memento_content_welcomespread]::before {
 	content: unset !important;
  }
+
+[memento_content_welcomespreadtext] {
+	line-height: .5em;
+}
+
+[mol_text_type="strong"] {
+	text-shadow: 0 0;
+	color: black;
+}
