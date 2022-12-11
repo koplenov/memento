@@ -67,7 +67,9 @@ namespace $.$$ {
 			return new $mol_time_moment(this.loadPages()[ id ].data().date * 1000).toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
 		}
 
-
+		Spread() {
+			return this.spreads()[ this.spread() ] || this.WelcomeSpread()
+		}
 
 		@$mol_mem_key
 		image_uri( id: any, imageUrl?: any ) {

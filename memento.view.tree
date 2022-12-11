@@ -24,6 +24,13 @@ $memento_content $mol_book2_catalog
 			sub /
 				<= add_icon $mol_icon_plus
 				\Добавить
+	WelcomeSpread <= welcomeSpread $mol_list
+		rows /
+			<= welcomeSpreadIcon $mol_icon_file_document
+			<= paragraph1 $mol_paragraph
+				title \Выберете материал
+			<= paragraph2 $mol_paragraph
+				title \либо добавьте новый
 	memento_item_text* $memento_item_text
 		id <= item_title*
 		date <= timestamp*

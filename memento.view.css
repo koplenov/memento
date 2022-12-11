@@ -94,3 +94,18 @@
 [memento_item_images_container]{
 	height: 4rem;
 }
+
+/* welcomespread */
+[memento_content_welcomespread] {
+	align-items: center;
+	margin: auto;
+}
+
+[memento_content_welcomespreadicon] {
+	height: 25%;
+	width: 25%;
+}
+
+[memento_content_welcomespread]::before {
+	content: unset !important;
+ }
