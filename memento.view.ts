@@ -1,22 +1,22 @@
 namespace $.$$ {
 	export class $memento_content extends $.$memento_content {
 
-		menu_link_content(id: any) {
-			let extistImages = false;
-			let extistDescription = false;
+		menu_link_content( id: any ) {
+			let extistImages = false
+			let extistDescription = false
 
 			const pageData = this.loadPages()[ id ].data()
 			const attachments = pageData.attachments
 			const text = pageData.description
 
-			if( attachments && attachments.images && Object.keys(attachments.images).length > 0 ) extistImages = true
+			if( attachments && attachments.images && Object.keys( attachments.images ).length > 0 ) extistImages = true
 			if( text && text.trim() !== "" ) extistDescription = true
 
-			if(!extistDescription && extistImages) return [this.memento_item_images(id)]
-			if(extistDescription && !extistImages) return [this.memento_item_text(id)]
-			if(extistDescription && extistImages) return [this.memento_item_card(id)]
+			if( !extistDescription && extistImages ) return [ this.memento_item_images( id ) ]
+			if( extistDescription && !extistImages ) return [ this.memento_item_text( id ) ]
+			if( extistDescription && extistImages ) return [ this.memento_item_card( id ) ]
 
-			return ["not implement"]
+			return [ "not implement" ]
 		}
 
 		@$mol_mem
@@ -43,6 +43,16 @@ namespace $.$$ {
 			return data
 		}
 
+		@$mol_mem
+		sharedDto( mementoDto?: MementoDTO ) {
+			if( mementoDto !== undefined ) {
+				const path = baseMementosDir + '/' + mementoDto.id
+				$memento_tauri.fs().writeTextFile( path + '/' + metaMementoSpec, JSON.stringify( mementoDto ), { dir: $memento_tauri.base().BaseDirectory.App } )
+				return mementoDto
+			}
+			return this.getMementoData() || []
+		}
+
 
 
 		@$mol_mem_key
@@ -56,15 +66,15 @@ namespace $.$$ {
 		}
 		@$mol_mem_key
 		item_images( id: number ) {
-			return this.page_images(this.loadPages()[ id ].data().id)
-			
+			return this.page_images( this.loadPages()[ id ].data().id )
+
 			const attachments = this.loadPages()[ id ].data().attachments
 			if( attachments && attachments.images ) return attachments.images
 			else return []
 		}
 		@$mol_mem_key
-		timestamp(id: number) {
-			return new $mol_time_moment(this.loadPages()[ id ].data().date * 1000).toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
+		timestamp( id: number ) {
+			return new $mol_time_moment( this.loadPages()[ id ].data().date * 1000 ).toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
 		}
 
 		Spread() {
@@ -168,7 +178,7 @@ namespace $.$$ {
 
 			let data = new MementoDTO()
 			data.id = uid
-			data.date = new $mol_time_moment().valueOf();
+			data.date = new $mol_time_moment().valueOf()
 			data.title = 'blank title',
 				data.md_content_path = contentMementoSpec,
 				data.nav = JSON.stringify( id ),
@@ -180,8 +190,8 @@ namespace $.$$ {
 			// this.log( extractedData )
 			if( extracted ) {
 				const post = extractedData.items[ 0 ] as any
-				this.log("page", post.date)
-				data.date = post.date;
+				this.log( "page", post.date )
+				data.date = post.date
 				data.title = $memento_utils.title_from_post( extractedData )
 				data.description = $memento_utils.description( post.text )
 				content = post.text
@@ -206,12 +216,12 @@ namespace $.$$ {
 		loadPages() {
 			let pages = []
 			for( const page of this.loadAllPages() ) {
-				if (this.selected_tag()){
-					if((page.data() as MementoDTO).tags?.some(v => v.toLowerCase().includes(this.selected_tag().toLowerCase()))) {
-						pages.push( page );
+				if( this.selected_tag() ) {
+					if( ( page.data() as MementoDTO ).tags?.some( v => v.toLowerCase().includes( this.selected_tag().toLowerCase() ) ) ) {
+						pages.push( page )
 					}
 				} else {
-					pages.push( page );
+					pages.push( page )
 				}
 			}
 			return pages
@@ -222,8 +232,8 @@ namespace $.$$ {
 			let pages = []
 			for( const iterator of this.loadInfo() ) {
 				const page = this.Page( iterator.name )
-				page.data = () => this.getMementoData( iterator.name );
-				pages.push( page );
+				page.data = () => this.getMementoData( iterator.name )
+				pages.push( page )
 			}
 			return pages
 		}
@@ -252,6 +262,7 @@ namespace $.$$ {
 					path + '/' + metaMementoSpec,
 					{ dir: $memento_tauri.base().BaseDirectory.App }
 				) )
+			this.sharedDto(data)
 			return data as MementoDTO
 		}
 
@@ -272,7 +283,7 @@ namespace $.$$ {
 			return this.loadAllPages()
 			return val as $memento_page[] || []
 		}
-		
+
 		@$mol_mem
 		tags() {
 			let tags = []

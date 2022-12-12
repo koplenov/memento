@@ -1,0 +1,32 @@
+$memento_tagger $mol_select
+	Add_option $mol_button_minor
+		click? <=> add_option? null
+		sub /
+			<= Add_option_icon $mol_icon_plus
+			<= filter_pattern
+
+$memento_tagger_list $mol_select_list
+	Pick $memento_tagger
+		align_hor <= align_hor \right
+		options <= options_pickable <= options /string
+		dictionary? <=> dictionary? *
+		value?val <=> pick?val \
+		option_label* <= option_title* \
+		trigger_enabled <= pick_enabled <= enabled true
+		hint <= pick_hint @ \Add..
+		Trigger_icon <= Pick_icon $mol_icon_plus
+
+
+$memento_tagger_compat $mol_view
+	dto?val null
+	sub /
+		<= Tagger $memento_tagger
+			dictionary? <=> dict? *
+				music \music
+				films \films
+				sleep \sleep
+		<= Skill_list $mol_view
+			sub <= skill_rows /
+				<= Skill*0 $mol_button_minor
+					sub / <= skill_title* \
+					event_click <= removeTagFromThisPost* null
