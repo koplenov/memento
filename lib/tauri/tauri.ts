@@ -1,5 +1,5 @@
 namespace $.$$ {
-	export class $memento_tauri {
+	export class $memento_lib_tauri extends $mol_object {
 		@$mol_action
 		static fs() {
 			return $mol_wire_sync( { ...window.__TAURI__.fs } )
@@ -18,7 +18,7 @@ namespace $.$$ {
 		@$mol_mem
 		static base() {
 			const tauri = this.fs()
-			tauri.createDir( baseMementosDir, { dir: this.fs().BaseDirectory.App, recursive: true } )
+			tauri.createDir( this.$.$memento_config_baseMementosDir, { dir: this.fs().BaseDirectory.App, recursive: true } )
 			return tauri
 		}
 	}

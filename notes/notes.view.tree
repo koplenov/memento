@@ -1,0 +1,60 @@
+$memento_notes $mol_book2_catalog
+	mementos null
+	Placeholder null
+	spreads <= loadPages
+	menu_head /
+		<= search $mol_search
+			query? <=> menu_filter? \
+			hint \Введите ключ, тег или название
+		<= addBtn $mol_button_minor
+			event_click?val <=> addKeyFromSearch?val null
+			sub /
+				<= add_icon $mol_icon_plus
+				\Добавить
+	WelcomeSpread <= welcomeSpread $mol_list
+		rows /
+			<= welcomeSpreadIcon $mol_icon_file_document
+			<= welcomeSpreadText $mol_text
+				text \
+					\Выберете материал
+					\либо **добавьте новый**
+	memento_note_text* $memento_note_text
+		id <= item_title*
+		date <= timestamp*
+		title <= item_title*
+		description <= item_description*
+	memento_note_images* $memento_note_images
+		id <= item_title*
+		date <= timestamp*
+		title <= item_title*
+		description <= item_description*
+		images <= item_images*
+	memento_note_card* $memento_note_card
+		id <= item_title*
+		date <= timestamp*
+		title <= item_title*
+		description <= item_description*
+		images <= item_images*
+	Page*0 $memento_page
+		auto /
+    		<= content_flush null
+		title <= page_title*
+		Title <= titler* $mol_string
+			value?val <=> page_title*?val \
+		tools /
+			<= copy_link* $mol_button_copy
+				text <= page_url*
+			<= removeMemento* $mol_button_minor
+				event_click? <=> removeMementoButton*? null
+				sub /
+					<= remove_icon $mol_icon_delete
+		body /$mol_view
+			<= Text* $mol_textarea
+				value? <=> content*? \
+			<= Images* $mol_list
+				rows <= page_images*?
+			<= Tagger* $memento_tagger_compat
+				tags <= tags null
+				dto?val <=> sharedDto?val null
+	Image*0 $mol_image
+		uri <= image_uri* \https://sun7-15.userapi.com/impf/c845418/v845418602/140503/zW9o4AS8vlk.jpg?size=720x540&quality=96&sign=5c5c3300e0a87aef04e403c3cc00494a&c_uniq_tag=G_ftdLPJOVpQ-YtUderDBeM1_lC9IA9QUr60A-66E3U&type=album

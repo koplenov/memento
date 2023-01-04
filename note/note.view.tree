@@ -1,0 +1,45 @@
+$memento_note $mol_view
+$memento_note_text $memento_note
+	sub /
+		<= content $mol_list
+			rows /
+				<= Title_container $mol_view
+					sub /
+						<= Label $mol_view
+							sub /
+								<= Ico $mol_avatar id <= id \
+								<= Title $mol_paragraph
+									title <= title \title
+						<= date \
+				<= Description $mol_paragraph
+					title <= description \description
+
+$memento_note_images $memento_note
+	sub /
+		<= content $mol_list
+			rows /
+				<= Title_container $mol_view
+					sub /
+						<= Label $mol_view
+							sub /
+								<= Ico $mol_avatar id <= id \
+								<= Title $mol_paragraph
+									title <= title \title
+						<= date \
+				<= container $mol_view
+					sub <= images
+
+$memento_note_card $memento_note
+	sub /
+		<= content $mol_list
+			rows /
+				<= Title_container $mol_view
+					sub /
+						<= Label $mol_view
+							sub /
+								<= Ico $mol_avatar id <= id \
+								<= Title $mol_paragraph
+									title <= title \title
+						<= date \
+				<= Description $mol_paragraph
+					title <= description \description

@@ -13,17 +13,17 @@
 [mol_page_head],
 [memento_sidebar],
 [memento_menu_body],
-[memento_memento_content_link] {
+[memento_memento_notes_link] {
 	border: 1px solid #969696;
 	background-color: #f9f9f9;
 	border-radius: 0px;
 }
 
-[memento_memento_content_link] {
+[memento_memento_notes_link] {
 	margin-left: -1px;
 }
 
-[memento_memento_content_links] {
+[memento_memento_notes_links] {
 	padding: 0px;
 }
 
@@ -36,7 +36,7 @@
 	background: #ebebeb;
 }
 
-/* [memento_content_search_query] { */
+/* [memento_notes_search_query] { */
 [mol_string] {
 	border-radius: 0px;
 }
@@ -45,72 +45,72 @@
 	color: #363636;
 }
 
-[memento_content_text] {
+[memento_notes_text] {
 	flex: none;
 	height:fit-content;
 }
 
 
-[memento_item_card_title_container],
-[memento_item_images_title_container],
-[memento_item_text_title_container] {
+[memento_note_card_title_container],
+[memento_note_images_title_container],
+[memento_note_text_title_container] {
 	justify-content: space-between;
 }
 
-[memento_item_images] {
+[memento_note_images] {
 	height: 4rem;
 }
 
-[memento_item_text_ico] {
+[memento_note_text_ico] {
 	margin-right: 1rem;
 }
 
-[memento_content_menu_link],
-[memento_content_menu_body] {
+[memento_notes_menu_link],
+[memento_notes_menu_body] {
 	padding: 0px;
 }
 
-[memento_content_memento_item_title_container] {
+[memento_notes_memento_note_title_container] {
 	padding-bottom: .5rem;
 }
 
-[memento_item_images],
-[memento_item_images_content],
-[memento_item_card],
-[memento_item_card_content],
-[memento_item_text],
-[memento_item_text_content] {
+[memento_note_images],
+[memento_note_images_content],
+[memento_note_card],
+[memento_note_card_content],
+[memento_note_text],
+[memento_note_text_content] {
 	width: 100%;
 }
 
-[memento_item_images_content],
-[memento_item_card_content],
-[memento_item_text_content] {
+[memento_note_images_content],
+[memento_note_card_content],
+[memento_note_text_content] {
 	padding: 1rem;
 	border: none;
 	border-bottom: 1px solid #969696;
 }
 
-[memento_item_images_container]{
+[memento_note_images_container]{
 	height: 4rem;
 }
 
 /* welcomespread */
-[memento_content_welcomespread] {
+[memento_notes_welcomespread] {
 	align-items: center;
 	margin: auto;
 }
 
-[memento_content_welcomespreadicon] {
+[memento_notes_welcomespreadicon] {
 	height: 25%;
 	width: 25%;
 }
 
-[memento_content_welcomespread]::before {
+[memento_notes_welcomespread]::before {
 	content: unset !important;
  }
 
-[memento_content_welcomespreadtext] {
+[memento_notes_welcomespreadtext] {
 	line-height: .5em;
 }
 
