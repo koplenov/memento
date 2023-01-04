@@ -36,8 +36,8 @@ $memento_notes $mol_book2_catalog
 		description <= item_description*
 		images <= item_images*
 	Page*0 $memento_page
-		auto /
-    		<= content_flush null
+		id <= id*
+		content_flush <= content_flush*
 		title <= page_title*
 		Title <= titler* $mol_string
 			value?val <=> page_title*?val \

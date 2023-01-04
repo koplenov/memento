@@ -249,20 +249,30 @@ namespace $.$$ {
 
 		@$mol_mem_key
 		content( id: any, next?: any ) {
-			const memento_data = this.getMementoData( id )
 			const path = this.$.$memento_config_baseMementosDir + '/' + id
-			const data = this.$.$mol_state_local.value( id, next ) ?? $memento_lib_tauri.base().readTextFile(
+			if( next !== undefined ) {
+				return this.$.$mol_state_local.value( id, next )
+			}
+
+			const memento_data = this.getMementoData( id )
+			return $memento_lib_tauri.base().readTextFile(
 				path + '/' + memento_data.md_content_path,
 				{ dir: $memento_lib_tauri.base().BaseDirectory.App }
 			)
-			this.flush_data(path, memento_data, data)
-			return data
 		}
 
-		@$mol_action
-		flush_data(path: string, memento_data : MementoDTO, data){
-			this.$.$mol_wait_timeout(1000)
-			$memento_lib_tauri.fs().writeTextFile( path + '/' + memento_data.md_content_path, data, { dir: $memento_lib_tauri.base().BaseDirectory.App } )
+		@$mol_mem_key
+		content_flush( id: string ) {
+			this.$.$mol_wait_timeout( 400 )
+			const memento_data = this.getMementoData( id )
+			const path = this.$.$memento_config_baseMementosDir + '/' + id + '/' + memento_data.md_content_path
+			$memento_lib_tauri.fs().writeTextFile( path, this.content( id ), { dir: $memento_lib_tauri.base().BaseDirectory.App } )
+		}
+
+		@$mol_mem_key
+		id( id: any ) {
+			if( id !== undefined ) return id as never
+			return ""
 		}
 
 		@$mol_action

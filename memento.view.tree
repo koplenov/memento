@@ -18,4 +18,7 @@ $memento_menu $mol_page
 		memento_menu_hided_state <= hided
 
 $memento_page $mol_page
+	auto /
+		<= content_flush null
+		<= id null
 	data null
