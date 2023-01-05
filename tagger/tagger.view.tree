@@ -1,6 +1,6 @@
 $memento_tagger $mol_select
 	Add_option $mol_button_minor
-		click? <=> add_option? null
+		click? <=> add_tag?
 		sub /
 			<= Add_option_icon $mol_icon_plus
 			<= filter_pattern
@@ -16,12 +16,14 @@ $memento_tagger_list $mol_select_list
 		hint <= pick_hint @ \Add..
 		Trigger_icon <= Pick_icon $mol_icon_plus
 
-
 $memento_tagger_compat $mol_view
-	tags null
-	dto?val null
+	id null
+	all_tags null
+	note_tags!id?next null
 	sub /
 		<= Tagger $memento_tagger
+			event_select? <=> add_tag_from_list? null
+			add_tag? <=> create_and_add_tag? null
 			dictionary? <=> dict? *
 				music \music
 				films \films

@@ -290,6 +290,15 @@ namespace $.$$ {
 			return data as MementoDTO
 		}
 
+		setMementoData( id: string, dto: MementoDTO ) {
+			const path = this.$.$memento_config_baseMementosDir + '/' + id
+			const data = JSON.stringify( dto )
+			$memento_lib_tauri.fs().writeTextFile(
+				path + '/' + $memento_config_metaMementoSpec, data,
+				{ dir: $memento_lib_tauri.base().BaseDirectory.App }
+			)
+		}
+
 		addKeyFromSearch() {
 			this.addMemento( this.search().query() )
 		}
@@ -309,14 +318,34 @@ namespace $.$$ {
 		}
 
 		@$mol_mem
-		tags() {
+		all_tags() {
 			let tags = []
 			let pages = this.mementos()
 			for( const iterator of pages ) {
 				const data = iterator.data()
-				tags.push( ...data.tags )
+				tags.push( ...Object.values(data.tags) )
 			}
 			return Array.from( [ ...new Set( tags ) ] )
+		}
+
+		@$mol_mem_key
+		current_id( id: string ) {
+			return id
+		}
+
+		@$mol_mem_key
+		note_tags( id: string, next?: any ) {
+			if( next !== undefined ) {
+				this.note_update_tags( id, next )
+			}
+			return this.getMementoData( id ).tags
+		}
+
+		@$mol_action
+		note_update_tags( id: string, tags: any ) {
+			const dto = this.getMementoData( id )
+			dto.tags = tags
+			this.setMementoData( id, dto )
 		}
 
 		@$mol_mem

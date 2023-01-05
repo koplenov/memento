@@ -1,21 +1,3 @@
-/*
-namespace $.$$ {
-	export class $memento_tagger extends $.$memento_tagger {
-		dict() {
-			// поле ввода
-			const queryTag = this.Friends().Pick().Filter().value()
-
-			// существующие теги + наш
-			const existTags = [
-				"mem", "koplenov", ...this.Friends().value(), queryTag
-			]
-
-			return existTags
-		}
-	}
-}
-*/
-
 namespace $.$$ {
 
 	export class $memento_tagger extends $.$memento_tagger {
@@ -27,79 +9,66 @@ namespace $.$$ {
 			]
 		}
 
+		/*
+		@$mol_action
 		add_option( event: MouseEvent ) {
+			const a = this.filter_pattern()
 			const option = { [ this.filter_pattern() ]: this.filter_pattern() }
 			this.dictionary( { ...this.dictionary(), ...option } )
 			this.event_select( this.filter_pattern(), event )
 			this.filter_pattern( '' )
 		}
-
-		dict() {
-
-		}
-
+		*/
 	}
 
 	export class $memento_tagger_compat extends $.$memento_tagger_compat {
-		@$mol_mem
-		auto() {
-			// fuck.. but it.. works!
-			this.Tagger().value = ( val?: any ) => undefined
-			// console.log( this.tags() )
+
+		@$mol_action
+		add_tag_from_list(next? : any){
+			if(next !== undefined){
+				this.add_tag(this.dict()[next])
+			}
+		}
+
+		add_tag(tag: string){
+			const tags = Object.values( this.note_tags( this.id() ) )
+			tags.push(tag)
+			this.note_tags( this.id(), tags )
+		}
+
+		@$mol_action
+		create_and_add_tag(){
+			const new_tag = this.Tagger().filter_pattern()
+			this.add_tag(new_tag)
+		}
+
+		@$mol_action
+		log( message?: any, ...optionalParams: any[] ) {
+			console.log( message, optionalParams )
 		}
 
 		@$mol_mem
 		dict( next?: any ) {
-			console.log("next", next)
-
-
-			if( next !== undefined ) {
-				const updateDto = this.dto() as MementoDTO
-				updateDto.tags = Object.values(next)
-				this.dto(updateDto)
-			}
-
-			// Array.from(items);
-			
-			if(next === undefined)
-				return this.tags();
-
-			const _ = this.skill_rows()
-
-			const out = this.tags().filter((x: string) => !this.dto().tags.includes(x))
-			return Object.fromEntries(out.map(x => [x, x])) || {gg: "gg"}
+			const all_tags = Object.values( this.all_tags() )
+			const note_tags = next !== undefined ? Object.values( this.note_tags( this.id(), next ) ) : Object.values( this.note_tags( this.id() ) )
+			return all_tags.filter( n => !note_tags.includes( n ) )
 		}
 
 		@$mol_mem
 		skill_rows() {
-			// load from page
-			//return [...Object.keys( this.dict() ).map( key => this.Skill( key ) ), ...Object.keys( this.allTags() ).map( key => this.Skill( key ) )]
-			// return Object.keys( this.dict() ).map( key => this.Skill( key ) )
-			if(this.dto().tags)
-				return Object.keys( this.dto().tags ).map( key => this.Skill( key ) )
-			return []
+			console.log( "skill_rowsss ", this.note_tags( this.id() ) )
+			return Object.keys( this.note_tags( this.id() ) ).map( key => this.Skill( key ) )
 		}
 
 		@$mol_mem_key
 		skill_title( key: string ) {
-			return this.dict()[ key ]
+			return Object.values( this.note_tags( this.id()) )[ key ]
 		}
 
 		@$mol_action
 		removeTagFromThisPost( id: any ) {
-			// непонятное
-			const { [ id ]: _, ...next } = this.Tagger().dictionary()
-			this.Tagger().dictionary( next )
-
-			return // выше и ниже одно и тоже
-
-			// понятное)0
-			const newTags = { ...this.Tagger().dictionary() }
-			delete newTags[ id ]
-			this.Tagger().dictionary( newTags )
+			const { [ id ]: _, ...next } = this.note_tags( this.id() )
+			this.note_tags( this.id(), next )
 		}
-
 	}
-
-
 }
