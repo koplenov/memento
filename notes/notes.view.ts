@@ -26,6 +26,23 @@ namespace $.$$ {
 			]
 		}
 
+		@$mol_mem
+		menu_links() {
+			this.log( 'menu_links', Object.values( this.loadAllPages() )[ 0 ].data().tags )
+			const keys = Object.keys( this.loadAllPages() )
+			if( this.menu_filter().length > 0 ) {
+				const values = Object.values( this.loadAllPages() )
+				const tags = keys
+					.filter( note => values[ note ].data().tags.length > 0 ? values[ note ].data().tags.some( tag => tag.includes( this.search().query() ) ) : false )
+				const names = keys
+					.filter( $mol_match_text( this.menu_filter(), spread => [ this.spread_title( spread ) ] ) )
+				return [ ...tags, ...names ].map( spread => this.Menu_link( spread ) )
+			}
+			else {
+				return keys.map( spread => this.Menu_link( spread ) )
+			}
+		}
+
 		auto() {
 			this.$.$mol_lights( true )
 		}
@@ -220,13 +237,7 @@ namespace $.$$ {
 		loadPages() {
 			let pages = []
 			for( const page of this.loadAllPages() ) {
-				if( this.selected_tag() ) {
-					if( ( page.data() as MementoDTO ).tags?.some( v => v.toLowerCase().includes( this.selected_tag().toLowerCase() ) ) ) {
-						pages.push( page )
-					}
-				} else {
-					pages.push( page )
-				}
+				pages.push( page )
 			}
 			return pages
 		}
@@ -323,7 +334,7 @@ namespace $.$$ {
 			let pages = this.mementos()
 			for( const iterator of pages ) {
 				const data = iterator.data()
-				tags.push( ...Object.values(data.tags) )
+				tags.push( ...Object.values( data.tags ) )
 			}
 			return Array.from( [ ...new Set( tags ) ] )
 		}
