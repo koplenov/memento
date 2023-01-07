@@ -1,5 +1,6 @@
 $memento_sidebar $mol_list
-	mementos null
+	selected_tag?tag null
+	all_tags null
 	Collection*0 $mol_expander
 		label <= collection_title* \
 	rows /

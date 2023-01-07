@@ -1,5 +1,5 @@
 $memento_notes $mol_book2_catalog
-	mementos null
+	selected_tag?tag null
 	Placeholder null
 	spreads <= loadPages
 	menu_head /

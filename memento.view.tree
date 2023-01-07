@@ -3,13 +3,11 @@ $memento $mol_view
 		<= Theme $mol_theme_auto
 	sub /
 		<= memento_sidebar $memento_sidebar
-			selected_collection => current_collection
-			selected_tag => current_tag
-			mementos <= pages
+			all_tags <= all_tags_mem
+			selected_tag?tag => current_tag_mem?tag
 		<= memento_notes $memento_notes
-			selected_collection <= current_collection
-			selected_tag <= current_tag
-			mementos => pages
+			all_tags?tags => all_tags_mem?tags
+			selected_tag?tag <= current_tag_mem?tag
 
 $memento_menu $mol_page
 	hided null

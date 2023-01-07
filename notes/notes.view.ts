@@ -28,14 +28,18 @@ namespace $.$$ {
 
 		@$mol_mem
 		menu_links() {
-			this.log( 'menu_links', Object.values( this.loadAllPages() )[ 0 ].data().tags )
+			this.Menu_filter().query( this.selected_tag() )
+
+			const term = this.menu_filter()
 			const keys = Object.keys( this.loadAllPages() )
-			if( this.menu_filter().length > 0 ) {
+			if( term.length > 0 ) {
 				const values = Object.values( this.loadAllPages() )
+
+				this.resets_tags()
 				const tags = keys
-					.filter( note => values[ note ].data().tags.length > 0 ? values[ note ].data().tags.some( tag => tag.includes( this.search().query() ) ) : false )
+					.filter( note => values[ note ].data().tags.length > 0 ? values[ note ].data().tags.some( tag => tag.includes( term ) ) : false )
 				const names = keys
-					.filter( $mol_match_text( this.menu_filter(), spread => [ this.spread_title( spread ) ] ) )
+					.filter( $mol_match_text( term, spread => [ this.spread_title( spread ) ] ) )
 				return [ ...tags, ...names ].map( spread => this.Menu_link( spread ) )
 			}
 			else {
@@ -70,7 +74,7 @@ namespace $.$$ {
 			return []
 		}
 
-		@$mol_mem
+		@$mol_mem_key
 		page_url( id: string ) {
 			const mementoDto = this.getMementoData( id )
 			return mementoDto.nav?.replaceAll( '"', '' )
@@ -153,6 +157,11 @@ namespace $.$$ {
 
 		@$mol_mem
 		resets( reset?: null ) {
+			return Math.random()
+		}
+
+		@$mol_mem
+		resets_tags( reset?: null ) {
 			return Math.random()
 		}
 
@@ -320,18 +329,11 @@ namespace $.$$ {
 			this.resets( null ) // форсируем ресет
 		}
 
-
-
-		@$mol_mem
-		mementos( val?: any ) {
-			return this.loadAllPages()
-			return val as $memento_page[] || []
-		}
-
 		@$mol_mem
 		all_tags() {
+			this.resets_tags()
 			let tags = []
-			let pages = this.mementos()
+			let pages = this.loadAllPages()
 			for( const iterator of pages ) {
 				const data = iterator.data()
 				tags.push( ...Object.values( data.tags ) )
@@ -345,23 +347,19 @@ namespace $.$$ {
 		}
 
 		@$mol_mem_key
-		note_tags( id: string, next?: any ) {
-			if( next !== undefined ) {
-				this.note_update_tags( id, next )
+		note_tags( id: string, tags?: any ) {
+			if( tags !== undefined ) {
+				this.note_update_tags( id, tags )
 			}
 			return this.getMementoData( id ).tags
 		}
 
 		@$mol_action
 		note_update_tags( id: string, tags: any ) {
+			this.resets_tags( null ) // форсируем ресет
 			const dto = this.getMementoData( id )
 			dto.tags = tags
 			this.setMementoData( id, dto )
-		}
-
-		@$mol_mem
-		selected_tag( val?: any ) {
-			return val
 		}
 	}
 }
