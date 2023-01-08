@@ -1,0 +1,12 @@
+[memento_sidebar_title],
+[memento_sidebar_collection]{
+	min-height: 25px;
+	max-height: 25px;
+	height: 25px;
+}
+
+[memento_sidebar_promo_block],
+[memento_sidebar_collection_preview_title] {
+	flex-grow: 3;
+	align-self: center;
+}

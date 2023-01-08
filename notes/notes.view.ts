@@ -183,9 +183,15 @@ namespace $.$$ {
 			alert( message )
 		}
 
+		@$mol_action
 		addMemento( id: string ) {
 			if( id.trim() === "" ) {
 				this.alert( "Попытка добавить пустую ссылку!" )
+				return
+			}
+
+			if( !id.includes( 'vk.com' ) ) {
+				this.alert( "Это не материал вк!" )
 				return
 			}
 
@@ -321,8 +327,10 @@ namespace $.$$ {
 			)
 		}
 
+		@$mol_action
 		addKeyFromSearch() {
 			this.addMemento( this.search().query() )
+			this.search().query( '' )
 		}
 
 		@$mol_mem_key
@@ -397,6 +405,11 @@ namespace $.$$ {
 
 		@$mol_action
 		note_update_collection( id: string, collection: string ) {
+			if( id === null ) {
+				this.resets_collections( null ) // форсируем ресет
+				return
+			}
+
 			if( id.includes( " | " ) ) {
 				const args = id.split( " | " )
 				id = args[ 0 ]
@@ -443,7 +456,7 @@ namespace $.$$ {
 		collection( id: string, next?: any ) {
 			if( next === undefined ) {
 				const data = this.all_collections().filter( collection => collection.uid === this.getMementoData( id ).collection )
-				return data[0] ? data[ 0 ].name : null
+				return data[ 0 ] ? data[ 0 ].name : null
 			} else {
 				this.page_note_update_collection( id, this.all_collections()[ next ].uid )
 				return next

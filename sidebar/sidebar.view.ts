@@ -24,19 +24,19 @@ namespace $.$$ {
 		}
 
 		@$mol_mem_key
-		collection_title(id: any, next?: any) {
-			const page = this.all_collections().filter( collection => collection.id === id )[ 0 ]
+		collection_title( id: any, next?: any ) {
+			const page = this.all_collections().filter( collection => collection.uid === id )[ 0 ]
 			if( next === undefined )
 				return page.name ?? 'Set name'
 			else {
-				this.note_update_collection(id + " | " + next)
+				this.note_update_collection( id + " | " + next )
 				return next
 			}
 		}
 
 		@$mol_mem
 		collections() {
-			return this.all_collections().map( collection => this.Collection( collection.id ) )
+			return this.all_collections().map( collection => this.Collection( collection.uid ) )
 
 			console.log( 'all collections', this.all_collections() )
 
@@ -61,9 +61,30 @@ namespace $.$$ {
 			return val
 		}
 
+		@$mol_mem_key
+		remover_container( id: any ) {
+			return this.can_edit_collections() ? this.deleteCollectionButton( id ) : null
+		}
+
+		@$mol_action
+		delete_collection( id: any ) {
+			console.log( 'delete_collection', id )
+			const uid = id
+			const path = this.$.$memento_config_collections_dir + '/' + uid
+			$memento_lib_tauri.fs().removeDir( path, { dir: $memento_lib_tauri.base().BaseDirectory.App, recursive: true } )
+			this.note_update_collection( null )
+		}
+
 		@$mol_action
 		select_collection( collection: string ) {
+			if( this.can_edit_collections() ) {
+				return
+			}
 			return this.selected_tag( collection )
+		}
+
+		select_all_materials() {
+			this.selected_tag( '' )
 		}
 
 		@$mol_action
@@ -79,6 +100,7 @@ namespace $.$$ {
 			data.name = 'GG'
 
 			$memento_lib_tauri.fs().writeTextFile( path + '/' + $memento_config_metaMementoSpec, JSON.stringify( data ), { dir: $memento_lib_tauri.base().BaseDirectory.App } )
+			this.note_update_collection( null )
 		}
 
 		/*

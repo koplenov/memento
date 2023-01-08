@@ -2,6 +2,15 @@
 	width: 50%;
 }
 
+[memento_sidebar] {
+	min-width: 12rem;
+	max-width: 12rem;
+}
+
+[memento_notes] {
+	width: 70%;
+}
+
 [memento_page] {
 	width: 50%;
 }
@@ -47,7 +56,7 @@
 
 [memento_notes_text] {
 	flex: none;
-	height:fit-content;
+	height: fit-content;
 }
 
 
@@ -91,7 +100,7 @@
 	border-bottom: 1px solid #969696;
 }
 
-[memento_note_images_container]{
+[memento_note_images_container] {
 	height: 4rem;
 }
 
@@ -108,7 +117,7 @@
 
 [memento_notes_welcomespread]::before {
 	content: unset !important;
- }
+}
 
 [memento_notes_welcomespreadtext] {
 	line-height: .5em;
