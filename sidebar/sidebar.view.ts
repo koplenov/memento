@@ -11,13 +11,35 @@ namespace $.$$ {
 					new this.$.$mol_icon_tag(),
 					tag,
 				] as readonly any[]
-				obj.event_click = () => this.selected_tag( tag );
+				obj.event_click = () => this.selected_tag( tag )
 				pages.push( obj )
 			} )
 			return pages
 		}
 
+		@$mol_mem
+		id( id?: any ) {
+			if( id !== undefined ) return id as never
+			return ""
+		}
+
+		@$mol_mem_key
+		collection_title(id: any, next?: any) {
+			const page = this.all_collections().filter( collection => collection.id === id )[ 0 ]
+			if( next === undefined )
+				return page.name ?? 'Set name'
+			else {
+				this.note_update_collection(id + " | " + next)
+				return next
+			}
+		}
+
+		@$mol_mem
 		collections() {
+			return this.all_collections().map( collection => this.Collection( collection.id ) )
+
+			console.log( 'all collections', this.all_collections() )
+
 			return [
 				this.memes(),
 			]
@@ -34,14 +56,42 @@ namespace $.$$ {
 		}
 
 		@$mol_mem
-		selected_collection( val?: any ) {
-			return val
-		}
-		
-		@$mol_mem
 		@$mol_action
 		selected_tag( val?: any ) {
 			return val
+		}
+
+		@$mol_action
+		select_collection( collection: string ) {
+			return this.selected_tag( collection )
+		}
+
+		@$mol_action
+		create_collection( val?: any ) {
+			console.log( 'create_collection', val )
+
+			const uid = $memento_utils.generateUUID()
+			const path = this.$.$memento_config_collections_dir + '/' + uid
+			$memento_lib_tauri.fs().createDir( path, { dir: $memento_lib_tauri.base().BaseDirectory.App, recursive: true } )
+
+
+			let data = new CollectionDTO()
+			data.name = 'GG'
+
+			$memento_lib_tauri.fs().writeTextFile( path + '/' + $memento_config_metaMementoSpec, JSON.stringify( data ), { dir: $memento_lib_tauri.base().BaseDirectory.App } )
+		}
+
+		/*
+			Edit Collections
+		*/
+		@$mol_mem
+		can_edit_collections( bool?: boolean ) {
+			return bool ?? false
+		}
+
+		@$mol_action
+		change_edit_collections_state() {
+			this.can_edit_collections( !this.can_edit_collections() )
 		}
 	}
 }

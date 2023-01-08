@@ -37,10 +37,12 @@ namespace $.$$ {
 
 				this.resets_tags()
 				const tags = keys
-					.filter( note => values[ note ].data().tags.length > 0 ? values[ note ].data().tags.some( tag => tag.includes( term ) ) : false )
+					.filter( note => values[ note ].data().tags && values[ note ].data().tags.length > 0 ? values[ note ].data().tags.some( tag => tag.includes( term ) ) : false )
+				const collections = keys
+					.filter( note => values[ note ].data().collection && values[ note ].data().collection.length > 0 ? values[ note ].data().collection.includes( term ) : false )
 				const names = keys
 					.filter( $mol_match_text( term, spread => [ this.spread_title( spread ) ] ) )
-				return [ ...tags, ...names ].map( spread => this.Menu_link( spread ) )
+				return [ ...tags, ...collections, ...names ].map( spread => this.Menu_link( spread ) )
 			}
 			else {
 				return keys.map( spread => this.Menu_link( spread ) )
@@ -209,11 +211,11 @@ namespace $.$$ {
 			let data = new MementoDTO()
 			data.id = uid
 			data.date = new $mol_time_moment().valueOf()
-			data.title = 'blank title',
-				data.md_content_path = $memento_config_contentMementoSpec,
-				data.nav = JSON.stringify( id ),
-				data.collection = 'GG'
-			data.tags = [ 'pp', 'gg' ]
+			data.title = 'blank title'
+			data.md_content_path = $memento_config_contentMementoSpec
+			data.nav = JSON.stringify( id )
+			//// 	data.collection = 'GG'
+			//// data.tags = [ 'pp', 'gg' ]
 
 			let content
 
@@ -289,8 +291,8 @@ namespace $.$$ {
 			$memento_lib_tauri.fs().writeTextFile( path, this.content( id ), { dir: $memento_lib_tauri.base().BaseDirectory.App } )
 		}
 
-		@$mol_mem_key
-		id( id: any ) {
+		@$mol_mem
+		id( id?: any ) {
 			if( id !== undefined ) return id as never
 			return ""
 		}
@@ -336,9 +338,10 @@ namespace $.$$ {
 			let pages = this.loadAllPages()
 			for( const iterator of pages ) {
 				const data = iterator.data()
-				tags.push( ...Object.values( data.tags ) )
+				if( data.tags && data.tags.length > 0 )
+					tags.push( ...Object.values( data.tags ) )
 			}
-			return Array.from( [ ...new Set( tags ) ] )
+			return Array.from( [ ...new Set( tags ) ] ) ?? []
 		}
 
 		@$mol_mem_key
@@ -356,10 +359,100 @@ namespace $.$$ {
 
 		@$mol_action
 		note_update_tags( id: string, tags: any ) {
-			this.resets_tags( null ) // форсируем ресет
 			const dto = this.getMementoData( id )
 			dto.tags = tags
 			this.setMementoData( id, dto )
+			this.resets_tags( null ) // форсируем ресет
+		}
+
+
+		/*
+			Collections
+		*/
+
+		@$mol_mem
+		resets_collections( reset?: null ) {
+			return Math.random()
+		}
+
+		@$mol_mem
+		load_collections_from_disk() {
+			this.resets_collections() // слушаем ресеты
+			return $memento_lib_tauri.fs().readDir( this.$.$memento_config_collections_dir, { dir: $memento_lib_tauri.base().BaseDirectory.App, recursive: true } )
+		}
+
+		@$mol_mem
+		all_collections() {
+			this.resets_collections()
+			return this.load_collections_from_disk().map( collection => {
+				const path = collection.path
+				const json = $memento_lib_tauri.fs().readTextFile(
+					path + '/' + $memento_config_metaMementoSpec,
+					{ dir: $memento_lib_tauri.base().BaseDirectory.App }
+				)
+				const data = $mol_json_from_string( json )
+				return { id: collection.name, uid: collection.name, name: data.name }
+			} )
+		}
+
+		@$mol_action
+		note_update_collection( id: string, collection: string ) {
+			if( id.includes( " | " ) ) {
+				const args = id.split( " | " )
+				id = args[ 0 ]
+				collection = args[ 1 ]
+			}
+
+			const path = this.$.$memento_config_collections_dir + '/' + id
+			const data = JSON.stringify( { name: collection } )
+			$memento_lib_tauri.fs().writeTextFile(
+				path + '/' + $memento_config_metaMementoSpec, data,
+				{ dir: $memento_lib_tauri.base().BaseDirectory.App }
+			)
+			this.resets_collections( null ) // форсируем ресет
+		}
+
+		@$mol_action
+		page_note_update_collection( id: string, collection: string ) {
+			if( id.includes( " | " ) ) {
+				const args = id.split( " | " )
+				id = args[ 0 ]
+				collection = args[ 1 ]
+			}
+
+			const dto = this.getMementoData( id )
+			dto.collection = collection
+			this.setMementoData( id, dto )
+			this.resets_collections( null ) // форсируем ресет
+		}
+
+		@$mol_action
+		getCollectionData( id: string ) {
+			const path = this.$.$memento_config_collections_dir + '/' + id
+			const json = $memento_lib_tauri.fs().readTextFile(
+				path + '/' + $memento_config_metaMementoSpec,
+				{ dir: $memento_lib_tauri.base().BaseDirectory.App }
+			)
+			this.log( json )
+			const data = $mol_json_from_string( json )
+			this.sharedDto( data )
+			return data as MementoDTO
+		}
+
+		@$mol_mem_key
+		collection( id: string, next?: any ) {
+			if( next === undefined ) {
+				const data = this.all_collections().filter( collection => collection.uid === this.getMementoData( id ).collection )
+				return data[0] ? data[ 0 ].name : null
+			} else {
+				this.page_note_update_collection( id, this.all_collections()[ next ].uid )
+				return next
+			}
+		}
+
+		collections() {
+			// return this.all_collections().map(collection => collection.name)
+			return this.all_collections().map( collection => [ collection.id ] = collection.name )
 		}
 	}
 }

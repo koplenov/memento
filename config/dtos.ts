@@ -1,4 +1,14 @@
 namespace $.$$ {
+	/*
+		Collections
+	*/
+	export class CollectionDTO {
+		name: string = ''
+	}
+
+	/*
+		Notes
+	*/
 	export class MementoDTO {
 		id: string = ''
 		date: number = 0

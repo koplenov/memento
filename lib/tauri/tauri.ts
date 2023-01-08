@@ -18,6 +18,7 @@ namespace $.$$ {
 		@$mol_mem
 		static base() {
 			const tauri = this.fs()
+			tauri.createDir( this.$.$memento_config_collections_dir, { dir: this.fs().BaseDirectory.App, recursive: true } )
 			tauri.createDir( this.$.$memento_config_baseMementosDir, { dir: this.fs().BaseDirectory.App, recursive: true } )
 			return tauri
 		}

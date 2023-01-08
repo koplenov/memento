@@ -1,4 +1,6 @@
 namespace $ {
+	export const $memento_config_collections_dir = 'collections'
+
 	export const $memento_config_baseMementosDir = 'mementos'
 	export const $memento_config_contentMementoSpec = 'content.md'
 	export const $memento_config_metaMementoSpec = 'meta.memento'

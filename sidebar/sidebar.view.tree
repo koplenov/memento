@@ -1,8 +1,14 @@
 $memento_sidebar $mol_list
+	note_update_collection!id?collection null
 	selected_tag?tag null
+	all_collections null
 	all_tags null
-	Collection*0 $mol_expander
-		label <= collection_title* \
+	Collection*0 $mol_button_minor
+		id <= id*
+		sub / <= title* $mol_string
+			value?next <=> collection_title!id?next \
+			enabled <= can_edit_collections false
+		event_click <= select_collection* null
 	rows /
 		<= titlebar $mol_view
 			sub /
@@ -24,8 +30,10 @@ $memento_sidebar $mol_list
 							title \Коллекции
 						<= pensil_button $mol_button_minor
 							sub / <= pensil_icon $mol_icon_lead_pencil
+							event_click <= change_edit_collections_state null
 						<= plus_button $mol_button_minor
 							sub / <= plus_icon $mol_icon_plus
+							event_click <= create_collection null
 				<= collections_list $mol_list
 					rows <= collections null
 		<= memes $mol_expander
