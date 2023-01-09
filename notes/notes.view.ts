@@ -222,7 +222,8 @@ namespace $.$$ {
 
 			let data = new MementoDTO()
 			data.id = uid
-			data.date = new $mol_time_moment().valueOf()
+			data.date_added = new $mol_time_moment().valueOf()
+			data.date = data.date_added // as defauld value
 			data.title = 'blank title'
 			data.md_content_path = $memento_config_contentMementoSpec
 			data.nav = JSON.stringify( id )
@@ -275,7 +276,7 @@ namespace $.$$ {
 			}
 
 			// sort by create date
-			pages.sort(function (a,b){return (b.data() as MementoDTO).date - (a.data() as MementoDTO).date})
+			pages.sort(function (a,b){return (b.data() as MementoDTO).date_added - (a.data() as MementoDTO).date_added})
 
 			return pages
 		}
