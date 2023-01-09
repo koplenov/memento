@@ -273,6 +273,10 @@ namespace $.$$ {
 				page.data = () => this.getMementoData( iterator.name )
 				pages.push( page )
 			}
+
+			// sort by create date
+			pages.sort(function (a,b){return (b.data() as MementoDTO).date - (a.data() as MementoDTO).date})
+
 			return pages
 		}
 
@@ -310,6 +314,7 @@ namespace $.$$ {
 		}
 
 		@$mol_action
+		@$mol_mem_key
 		getMementoData( id: string ) {
 			const path = this.$.$memento_config_baseMementosDir + '/' + id
 
