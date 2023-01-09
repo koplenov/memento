@@ -26,9 +26,15 @@ namespace $.$$ {
 			]
 		}
 
+		clear_term() {
+			this.selected_tag( '' )
+			this.Menu_filter().query( '' )
+		}
+
 		@$mol_mem
 		menu_links() {
-			this.Menu_filter().query( this.selected_tag() )
+			if( this.selected_tag() !== '' )
+				this.Menu_filter().query( this.selected_tag() )
 
 			const term = this.menu_filter()
 			const keys = Object.keys( this.loadAllPages() )

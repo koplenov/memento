@@ -1,12 +1,13 @@
 $memento_notes $mol_book2_catalog
 	note_update_collection!id?collection null
-	selected_tag?tag null
+	selected_tag?tag \
 	Placeholder null
 	spreads <= loadPages
 	menu_head /
 		<= search $mol_search
 			query? <=> menu_filter? \
 			hint \Введите ключ, тег или название
+			clear? <=> clear_term?
 		<= addBtn $mol_button_minor
 			event_click?val <=> addKeyFromSearch?val null
 			sub /

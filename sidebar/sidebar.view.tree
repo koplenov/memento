@@ -1,6 +1,6 @@
 $memento_sidebar $mol_list
 	note_update_collection!id?collection null
-	selected_tag?tag null
+	selected_tag?tag \
 	all_collections null
 	all_tags null
 	Collection*0 $mol_button_minor
