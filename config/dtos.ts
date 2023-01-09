@@ -11,7 +11,7 @@ namespace $.$$ {
 	*/
 	export class MementoDTO {
 		id: string = ''
-		date: number = 0 // date posted
+		date_posted: number = 0
 		date_added: number = 0
 		title?: string = undefined
 		description?: string = undefined

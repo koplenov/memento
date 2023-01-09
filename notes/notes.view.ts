@@ -107,7 +107,7 @@ namespace $.$$ {
 		}
 		@$mol_mem_key
 		timestamp( id: number ) {
-			return new $mol_time_moment( this.loadPages()[ id ].data().date * 1000 ).toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
+			return new $mol_time_moment( this.loadPages()[ id ].data().date_posted * 1000 ).toString( 'DD Mon YYYY в hh:mm' )//new $mol_date()?.toString( 'DD Month YYYY' )
 		}
 
 		Spread() {
@@ -223,7 +223,6 @@ namespace $.$$ {
 			let data = new MementoDTO()
 			data.id = uid
 			data.date_added = new $mol_time_moment().valueOf()
-			data.date = data.date_added // as defauld value
 			data.title = 'blank title'
 			data.md_content_path = $memento_config_contentMementoSpec
 			data.nav = JSON.stringify( id )
@@ -236,7 +235,7 @@ namespace $.$$ {
 			if( extracted ) {
 				const post = extractedData.items[ 0 ] as any
 				this.log( "page", post.date )
-				data.date = post.date
+				data.date_posted = post.date
 				data.title = $memento_utils.title_from_post( extractedData )
 				data.description = $memento_utils.description( post.text )
 				content = post.text
@@ -275,7 +274,7 @@ namespace $.$$ {
 				pages.push( page )
 			}
 
-			// sort by create date
+			// sort by added date
 			pages.sort(function (a,b){return (b.data() as MementoDTO).date_added - (a.data() as MementoDTO).date_added})
 
 			return pages
