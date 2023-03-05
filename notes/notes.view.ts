@@ -181,7 +181,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		vk() {
-			return new $memento_lib_vk( $memento_config_vktoken )
+			return new $memento_lib_vk( $memento_config_vktoken2.get_token() )
 		}
 
 		@$mol_action

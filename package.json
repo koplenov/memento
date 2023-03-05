@@ -5,7 +5,8 @@
   "scripts": {
     "start": "cd .. && npm start",
     "tauri": "tauri",
-    "dev": "tauri dev"
+    "dev": "tauri dev",
+	"build": "tauri build"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,6 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@tauri-apps/cli": "^1.1.1"
+    "@tauri-apps/cli": "^1.2.3"
   }
 }
