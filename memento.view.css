@@ -1,3 +1,16 @@
+[memento_instruction_text] {
+	border: 1px solid gray;
+	margin-bottom: 1.4rem;
+}
+
+[memento] {
+	justify-content: center;
+}
+
+[memento_instruction_view] {
+	width: 100%;
+}
+
 [mol_book2_catalog_menu] {
 	width: 50%;
 }

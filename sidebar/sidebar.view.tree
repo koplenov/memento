@@ -41,15 +41,6 @@ $memento_sidebar $mol_list
 			<= collections_block $mol_list sub /
 				<= collections_list $mol_list
 					rows <= collections null
-			<= memes $mol_expander
-				label / \Мемы
-				content /
-					<= fromme $mol_expander
-						label / \От ромы
-						content /
-					<= dashboards $mol_expander
-						label / \Dashboards
-						content /
 		<= tags_label $mol_paragraph
 			title \ТЕГИ
 		<= tags_block_scroll $mol_scroll sub /

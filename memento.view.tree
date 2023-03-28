@@ -13,24 +13,24 @@ $memento $mol_view
 			selected_tag?tag <=> current_tag_mem?tag
 			note_update_collection!id?collection => note_update_collection_mem!id?collection
 	token_instruction /
-		<= instruction_view $mol_list
-			rows /
-				<= instruction_text $mol_text
-					text \
-						\Отлично! Установка завершена, для работы с api необходимо указать свой токен.
-						\Данные хранятся только на вашем устройстве и не передаються вторым/третьим лицам.
-						\### Шаги для получения токена вконтакте:
-				<= get_token $mol_link
-					title \1. Получить токен *тык сюда* (нужно жмакнуть `Разрешить`)
-					uri \https://oauth.vk.com/authorize?client_id=6121396&scope=327680&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token&revoke=1
-				<= string_block $mol_view
-					sub /
-						<= instruction_text_2 $mol_text
-							text \ 2. Скопировать адресную строку сюда:
+		<= instruction_page $mol_page
+			title \Установка завершена
+			body /
+				<= instruction_view $mol_list
+					rows /
+						<= instruction_text $mol_text
+							text \
+								\Для работы с api необходимо указать свой токен.
+								\Для использования приложения необходимо предоставить доступ к Вашему аккаунту ВКонтакте.
+								\Это полностью безопасно. Вся информация будет хранится только на Вашем компьютере.
+						<= get_token $mol_link
+							title \Авторизация
+							uri \https://oauth.vk.com/authorize?client_id=6121396&scope=327680&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token&revoke=1
 						<= set_token $mol_string
-				<= apply_token $mol_button_minor
-					click <= configure_token null
-					sub /\ 3. Конфигурировать! *тык сюда*
+							hint \Скопируйте ссылку из адресной строки в поле
+						<= apply_token $mol_button_minor
+							click <= configure_token null
+							sub /\Привязать аккаунт
 $memento_menu $mol_page
 	hided null
 	attr *
